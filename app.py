@@ -127,6 +127,16 @@ def generate_single_document(template_filename, template_root, replacements, use
 # --- RUTAS ---
 
 @app.route('/')
+def home():
+    # Esto busca 'templates/index.html'
+    return render_template('index.html')
+
+@app.route('/login')
+def login():
+    # Esto busca 'templates/login.html'
+    return render_template('login.html')
+
+@app.route('/')
 @login_required
 def formulario():
     return render_template('index.html')
