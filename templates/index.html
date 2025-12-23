@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Servicios - Strat & Tax</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Feedback visual para la carga */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 10px;
+            background: #e1f5fe;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            color: #0288d1;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='stratandtax.png') }}" alt="Logo Strat & Tax" class="logo-img">
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" style="color:var(--color-secondary)">Servicios</a></li>
+                    <li><a href="{{ url_for('logout') }}" style="color: #ff4444;">Cerrar Sesión</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-content">
+        <h1>Generación de Contratos</h1>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="flash-message" style="background: #ffdbdb; padding: 10px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #ff0000;">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+               </section>
+
+        <section id="form-contacto" class="card" style="max-width: 800px; margin: 30px auto;">
+            <h2 style="text-align:center">Soporte Técnico</h2>
+            <form onsubmit="event.preventDefault(); alert('Reporte enviado al administrador');">
+                <label>Describa el problema:</label>
+                <textarea id="mensaje" rows="3" placeholder="¿Tienes algún problema con las plantillas?" required></textarea>
+                <button type="submit" style="background:#515457; color: white; border: none; padding: 10px; cursor: pointer;">Enviar Reporte</button>
+            </form>
+        </section>
+
+    </main>
+
+    <footer style="text-align: center; padding: 20px; color: #666;">
+        &copy; 2025 Strat & Tax - Panel de Gestión Privado.
+    </footer>
+
+    <script>
+        // Script para evitar múltiples envíos y mostrar carga
+        document.getElementById('contract-form').onsubmit = function() {
+            document.getElementById('loading-msg').style.display = 'block';
+            this.querySelector('button').disabled = true;
+            this.querySelector('button').innerText = 'Procesando...';
+        };
+    </script>
+</body>
+</html>
