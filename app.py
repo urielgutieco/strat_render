@@ -20,12 +20,9 @@ app.config['SECRET_KEY'] = os.environ.get("SESSION_SECRET", "una_clave_muy_segur
 # --- CONFIGURACIÓN DE BASE DE DATOS ---
 db_url = os.environ.get("DATABASE_URL", "sqlite:///usuarios.db")
 if db_url.startswith("postgres://"):
-    # Render usa 'postgres://', pero SQLAlchemy requiere 'postgresql://'
-    # Además, añadimos el parámetro de SSL para producción
     db_url = db_url.replace("postgres://", "postgresql://", 1)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = db_url
-# Añadir esto para evitar desconexiones en Render:
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping": True}
 
 # --- CONFIGURACIÓN DE CORREO (Flask-Mail) ---
@@ -44,6 +41,7 @@ login_manager.login_view = 'login'
 # --- CONFIGURACIÓN DE DIRECTORIOS ---
 TEMPLATE_FOLDER = 'template_word'
 TMP_DIR = '/tmp'
+# Solo creamos las carpetas necesarias si no existen
 for folder in [TEMPLATE_FOLDER, TMP_DIR]:
     os.makedirs(folder, exist_ok=True)
 
@@ -59,7 +57,7 @@ class User(UserMixin, db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# --- MAPEO DE SERVICIOS ---
+# --- MAPEO DE SERVICIOS (Manteniendo tu estructura original) ---
 SERVICIO_TO_DIR = {
     "Servicios de construccion de unidades unifamiliares": "construccion_unifamiliar",
     "Servicios de reparacion o ampliacion o remodelacion de viviendas unifamiliares": "reparacion_remodelacion_unifamiliar",
@@ -124,21 +122,12 @@ def generate_single_document(template_filename, template_root, replacements, use
     buffer.seek(0)
     return buffer
 
-# --- RUTAS ---
-
-@app.route('/')
-def home():
-    # Esto busca 'templates/index.html'
-    return render_template('index.html')
-
-@app.route('/login')
-def login():
-    # Esto busca 'templates/login.html'
-    return render_template('login.html')
+# --- RUTAS DE NAVEGACIÓN CORREGIDAS ---
 
 @app.route('/')
 @login_required
 def formulario():
+    # Detecta 'templates/index.html' automáticamente
     return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -158,6 +147,8 @@ def login():
             return redirect(url_for('formulario'))
         
         flash("Usuario o contraseña incorrectos")
+    
+    # Detecta 'templates/login.html' automáticamente
     return render_template('login.html')
 
 @app.route('/logout')
@@ -225,7 +216,6 @@ def generate_word():
         zip_filename = f"Contratos_{rfc_cliente}.zip"
 
         # --- ENVÍO DE CORREO ---
-        # Definir los dos correos de destino aquí o recibirlos del form
         destinatarios = ["uriel.gutierrenz@gmail.com", "urielgutieco@gmail.com"] 
         
         try:
@@ -236,10 +226,8 @@ def generate_word():
             )
             msg.attach(zip_filename, "application/zip", zip_content)
             mail.send(msg)
-            print("Correo enviado con éxito")
         except Exception as mail_err:
             print(f"Error enviando correo: {mail_err}")
-            # Continuamos para que el usuario al menos pueda descargar el archivo
 
         zip_buffer.seek(0)
         return send_file(
