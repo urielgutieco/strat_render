@@ -174,9 +174,7 @@
             <h2>Generar registro.</h2>
             <p style="text-align:center;">Complete los campos a continuación</p>
 
-            <form id="solicitudForm" enctype="multipart/form-data">
-
-            <form id="solicitudForm" action="/generate-word" method="POST" enctype="multipart/form-data">
+            <form id="solicitudForm">
 
                 <div class="form-group">
                     <label for="servicio">Selecciona un servicio (*)</label>
@@ -316,24 +314,16 @@
     </div>
 
     <script>
-        /**
-         * Función: login()
-         * Uso: Valida el acceso del usuario y cambia la vista.
-         */
         function login() {
             const userInp = document.getElementById('user').value;
             const passInp = document.getElementById('password').value;
             const errorDiv = document.getElementById('error');
             const container = document.getElementById('main-container');
 
-            // Credenciales solicitadas
             if (userInp === "uriel" && passInp === "123456") {
-                // Ocultar login
                 document.getElementById('login-section').style.display = 'none';
-                // Mostrar formulario y botón logout
                 document.getElementById('form-solicitud').style.display = 'block';
                 document.getElementById('logout-btn').style.display = 'block';
-                // Cambia el ancho del contenedor para el formulario
                 container.classList.add('dashboard-mode');
                 errorDiv.textContent = "";
             } else {
@@ -341,14 +331,61 @@
             }
         }
 
-        /**
-         * Función: logout()
-         * Regresa al estado inicial recargando la página.
-         */
         function logout() {
             location.reload();
         }
 
+        // Script modificado para procesar el formulario sin cerrar sesión
+        document.getElementById('solicitudForm').onsubmit = async function(e) {
+            e.preventDefault(); // Evita que la página se recargue o redirija
+            
+            const btn = this.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+            
+            // UI Feedback
+            btn.textContent = "Generando archivos... por favor espere";
+            btn.disabled = true;
+
+            const formData = new FormData(this);
+
+            try {
+                // Enviamos los datos al endpoint mediante Fetch
+                const response = await fetch('/generate-word', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    // Recibimos el archivo como un Blob (objeto binario)
+                    const blob = await response.blob();
+                    
+                    // Creamos una URL temporal para el archivo
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    
+                    // Nombre sugerido del archivo descargado
+                    a.download = "Solicitud_Registro.docx"; 
+                    
+                    document.body.appendChild(a);
+                    a.click(); // Iniciamos la descarga automáticamente
+                    a.remove();
+                    window.URL.revokeObjectURL(url); // Liberamos memoria
+
+                    alert("¡Documento generado con éxito!");
+                    this.reset(); // Limpia el formulario para el siguiente registro
+                } else {
+                    alert("Hubo un error al generar el documento en el servidor.");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Error de conexión con el servidor.");
+            } finally {
+                // Restauramos el botón
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        };
     </script>
 </body>
 </html>
