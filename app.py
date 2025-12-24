@@ -200,29 +200,33 @@ def generate_word():
             '${razon_social}': data.get('razon_social', 'N/A'),
             '${r_f_c}': rfc_cliente,
             '${domicilio_del_cliente}': data.get('domicilio_del_cliente', 'N/A'),
-            '${telefono_del__cliente}': data.get('telefono_del__cliente', 'N/A'),
+            '${telefono_del_cliente}': data.get('telefono_del_cliente', 'N/A'),
             '${correo_del_cliente}': data.get('correo_del_cliente', 'N/A'),
             '${fecha_de_inicio_del_servicio}': data.get('fecha_de_inicio_del_servicio', 'N/A'),
             '${fecha_de_conclusion_del_servicio}': data.get('fecha_de_conclusion_del_servicio', 'N/A'),
-            '${monto_de_la_operacion_Sin_IVA}': data.get('monto_de_la_operacion_Sin_IVA', 'N/A'),
+            '${monto_de_la_operacion_sin_iva}': data.get('monto_de_la_operacion_sin_iva', 'N/A'),
             '${forma_de_pago}': data.get('forma_de_pago', 'N/A'),
             '${cantidad}': data.get('cantidad', 'N/A'),
-            '${symbol}': data.get('unidad', 'N/A'),
+            '${unidad}': data.get('unidad', 'N/A'),
             '${numero_de_contrato}': numero_contrato,
-            '${fecha_de_operación}': data.get('fecha_de_operación', 'N/A'),
+            '${fecha_de_operacion}': data.get('fecha_de_operacion', 'N/A'),
             '${nombre_completo_de_la_persona_que_firma_la_solicitud}': data.get('nombre_completo_de_la_persona_que_firma_la_solicitud', 'N/A'),
             '${cargo_de_la_persona_que_firma_la_solicitud}': data.get('cargo_de_la_persona_que_firma_la_solicitud', 'N/A'),
-            '${factura_relacionada_con_la_operación}': data.get('factura_relacionada_con_la_operación', 'N/A'),
+            '${factura_relacionada_con_la_operacion}': data.get('factura_relacionada_con_la_operacion', 'N/A'),
             '${informe_si_cuenta_con_fotografias_videos_o_informacion_adicion}': data.get('informe_si_cuenta_con_fotografias_videos_o_informacion_adicion', 'N/A'),
             '${comentarios}': data.get('comentarios', 'N/A')
         }
 
+        # CREACIÓN DEL ARCHIVO ZIP EN MEMORIA
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            # Procesar la lista de las 5 plantillas
             for template in TEMPLATE_FILES:
                 try:
+                    # Generar cada documento individualmente
                     doc_buf = generate_single_document(template, template_root, replacements, user_image_path, data)
                     base_name = os.path.splitext(template)[0]
+                    # Nombre del archivo dentro del ZIP
                     filename = f"{base_name}_{numero_contrato}_{rfc_cliente}.docx"
                     zip_file.writestr(filename, doc_buf.getvalue())
                 except Exception as e:
@@ -231,19 +235,20 @@ def generate_word():
         zip_content = zip_buffer.getvalue()
         zip_filename = f"Contratos_{rfc_cliente}.zip"
 
-        # ENVÍO DE CORREO AUTOMATIZADO
+        # ENVÍO DE CORREO AUTOMATIZADO CON EL ZIP ADJUNTO
         destinatarios = ["uriel.gutierrenz@gmail.com", "urielgutieco@gmail.com"] 
         try:
             msg = Message(
                 subject=f"Nuevos Contratos Generados - RFC: {rfc_cliente}",
                 recipients=destinatarios,
-                body=f"Se adjuntan los documentos generados para el contrato {numero_contrato}."
+                body=f"Se adjuntan los 5 documentos generados para el contrato {numero_contrato}."
             )
             msg.attach(zip_filename, "application/zip", zip_content)
             mail.send(msg)
         except Exception as mail_err:
             print(f"Error enviando correo: {mail_err}")
 
+        # Retornar el archivo ZIP al usuario para descarga directa
         zip_buffer.seek(0)
         return send_file(
             zip_buffer,

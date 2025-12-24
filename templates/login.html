@@ -7,17 +7,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        /* Bloque de variables CSS: Define los colores base para todo el documento */
+        /* Bloque de variables CSS */
         :root {
-            --primary: #6366f1;         /* Color morado principal */
-            --primary-hover: #818cf8;   /* Color morado claro para el cursor */
-            --bg-dark: #020617;         /* Fondo azul casi negro */
-            --card-bg: rgba(255, 255, 255, .06); /* Fondo semi-transparente */
-            --text-main: #ffffff;       /* Color de texto blanco */
-            --text-dim: #94a3b8;        /* Color de texto grisáceo */
+            --primary: #6366f1;
+            --primary-hover: #818cf8;
+            --bg-dark: #020617;
+            --card-bg: rgba(255, 255, 255, .06);
+            --text-main: #ffffff;
+            --text-dim: #94a3b8;
         }
 
-        /* Estilos base del cuerpo: Centra todo el contenido en pantalla */
         body {
             margin: 0;
             min-height: 100vh;
@@ -31,19 +30,16 @@
             box-sizing: border-box;
         }
 
-        /* Contenedores Principales: Controlan el ancho de la tarjeta según el estado */
         .container {
             width: 100%;
             max-width: 450px;
             transition: max-width 0.3s ease;
         }
 
-        /* Esta clase se añade vía JS para ensanchar la vista al entrar al formulario */
         .container.dashboard-mode {
             max-width: 800px;
         }
 
-        /* Estilo de la tarjeta: Efecto de cristal (backdrop-filter) y sombras */
         .card {
             background: var(--card-bg);
             padding: 40px;
@@ -65,7 +61,6 @@
             text-align: center;
         }
 
-        /* Formulario y Inputs: Configuración de espaciados y campos de texto */
         .form-group {
             margin-bottom: 20px;
             text-align: left;
@@ -91,19 +86,16 @@
             outline: none;
         }
 
-        /* Cambio de color cuando el usuario hace clic en un campo */
         input:focus, select:focus, textarea:focus {
             border-color: var(--primary);
             background: rgba(255, 255, 255, .1);
         }
 
-        /* Fondo para las opciones del menú desplegable */
         option {
             background: #1e1b4b;
             color: white;
         }
 
-        /* Estilo de Botones: Degradado y efectos de interacción */
         button {
             width: 100%;
             padding: 14px;
@@ -122,13 +114,12 @@
             transform: translateY(-1px);
         }
 
-        /* Botón de salida con colores rojizos para advertir la acción */
         #logout-btn {
             margin-top: 20px;
             background: transparent;
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: var(--text-dim);
-            display: none; /* Oculto inicialmente */
+            display: none;
         }
 
         #logout-btn:hover {
@@ -137,7 +128,6 @@
             border-color: #fca5a5;
         }
 
-        /* Clase para mensajes de error en rojo */
         .error {
             margin-top: 12px;
             color: #fca5a5;
@@ -145,7 +135,6 @@
             text-align: center;
         }
 
-        /* Oculta el formulario al cargar la página por primera vez */
         #form-solicitud {
             display: none;
         }
@@ -335,45 +324,36 @@
             location.reload();
         }
 
-        // Script modificado para procesar el formulario sin cerrar sesión
         document.getElementById('solicitudForm').onsubmit = async function(e) {
-            e.preventDefault(); // Evita que la página se recargue o redirija
+            e.preventDefault(); 
             
             const btn = this.querySelector('button[type="submit"]');
             const originalText = btn.textContent;
             
-            // UI Feedback
             btn.textContent = "Generando archivos... por favor espere";
             btn.disabled = true;
 
             const formData = new FormData(this);
 
             try {
-                // Enviamos los datos al endpoint mediante Fetch
                 const response = await fetch('/generate-word', {
                     method: 'POST',
                     body: formData
                 });
 
                 if (response.ok) {
-                    // Recibimos el archivo como un Blob (objeto binario)
                     const blob = await response.blob();
-                    
-                    // Creamos una URL temporal para el archivo
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    
-                    // Nombre sugerido del archivo descargado
                     a.download = "Solicitud_Registro.docx"; 
-                    
                     document.body.appendChild(a);
-                    a.click(); // Iniciamos la descarga automáticamente
+                    a.click();
                     a.remove();
-                    window.URL.revokeObjectURL(url); // Liberamos memoria
+                    window.URL.revokeObjectURL(url);
 
                     alert("¡Documento generado con éxito!");
-                    this.reset(); // Limpia el formulario para el siguiente registro
+                    this.reset();
                 } else {
                     alert("Hubo un error al generar el documento en el servidor.");
                 }
@@ -381,7 +361,6 @@
                 console.error("Error:", error);
                 alert("Error de conexión con el servidor.");
             } finally {
-                // Restauramos el botón
                 btn.textContent = originalText;
                 btn.disabled = false;
             }
