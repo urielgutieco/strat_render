@@ -1,24 +1,25 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal de Servicios y Contratos</title>
+    <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Portal de Servicios y Contratos</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
 <style>
+    /* VARIABLES DE DISEÑO (Custom Properties) */
     :root {
-        /* Paleta de colores basada en la imagen */
+        /* Define la paleta de colores global para facilitar cambios rápidos de marca */
         --bg-dark: #050a12;
         --accent-blue: #2563eb;
         --accent-yellow: #facc15;
         --text-main: #ffffff;
         --text-dim: #94a3b8;
-        --card-bg: rgba(255, 255, 255, 0.05);
+        --card-bg: rgba(255, 255, 255, 0.05); /* Color semitransparente para efecto de cristal */
         --border-color: rgba(255, 255, 255, 0.1);
     }
 
+    /* ESTILOS DE CUERPO */
     body {
         background-color: var(--bg-dark);
         color: var(--text-main);
@@ -26,14 +27,14 @@
         margin: 0;
     }
 
-    /* Navegación transparente y moderna */
+    /* NAVEGACIÓN: Efecto Glassmorphism (difuminado de fondo) */
     .navbar {
         background-color: rgba(5, 10, 18, 0.8);
-        backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px); /* Difumina lo que esté detrás de la barra */
         padding: 20px 0;
     }
 
-    /* Sección Hero con el gradiente radial de la imagen */
+    /* SECCIÓN HERO: Gradiente visual complejo basado en la imagen de referencia */
     .hero-section {
         background: radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.15) 0%, transparent 40%),
                     linear-gradient(180deg, var(--bg-dark) 0%, #0a1628 100%);
@@ -41,18 +42,19 @@
         min-height: 80vh;
     }
 
-    /* Títulos con el estilo de énfasis (azul y amarillo) */
+    /* TIPOGRAFÍA */
     h1 {
         font-size: 3.5rem;
         font-weight: 800;
         line-height: 1.1;
     }
 
-    .text-precision { color: #93c5fd; } /* Azul claro */
-    .text-control { color: var(--accent-yellow); } /* Amarillo */
+    /* Clases de utilidad para colores específicos de la marca */
+    .text-precision { color: #93c5fd; } 
+    .text-control { color: var(--accent-yellow); } 
     .text-velocity { color: var(--accent-yellow); }
 
-    /* Tarjetas estilo Glassmorphism (Resumen Ejecutivo) */
+    /* TARJETAS: Estilo "Glassmorphism" con bordes finos y fondo translúcido */
     .card {
         background: var(--card-bg);
         backdrop-filter: blur(12px);
@@ -62,7 +64,7 @@
         color: var(--text-main);
     }
 
-    /* Botón azul principal */
+    /* BOTONES: Personalización de estilos de Bootstrap */
     .btn-primary {
         background-color: var(--accent-blue);
         color: white;
@@ -70,15 +72,14 @@
         padding: 12px 28px;
         font-weight: 600;
         border: none;
-        transition: transform 0.2s, background 0.2s;
+        transition: transform 0.2s, background 0.2s; /* Efecto suave al pasar el mouse */
     }
 
     .btn-primary:hover {
         background-color: #1d4ed8;
-        transform: translateY(-2px);
+        transform: translateY(-2px); /* Eleva el botón ligeramente al hacer hover */
     }
 
-    /* Botón secundario "Ver solución" */
     .btn-outline {
         background: transparent;
         border: 1px solid var(--border-color);
@@ -87,7 +88,7 @@
         padding: 12px 28px;
     }
 
-    /* Badges y etiquetas pequeñas */
+    /* ETIQUETAS (BADGES): Estilo sutil para categorización */
     .badge-platform {
         background: rgba(37, 99, 235, 0.1);
         border: 1px solid rgba(37, 99, 235, 0.3);
@@ -106,9 +107,11 @@
             <a class="navbar-brand" href="#" @click="section = 'inicio'">Mi Empresa</a>
             <div class="navbar-nav ms-auto">
                 <a class="nav-link" href="#" @click="section = 'inicio'">Inicio</a>
+                
                 <template x-if="!isAuthenticated">
                     <a class="nav-link" href="#" @click="section = 'login'">Acceder</a>
                 </template>
+                
                 <template x-if="isAuthenticated">
                     <div class="d-flex align-items-center">
                         <a class="nav-link" href="#" @click="section = 'formulario'">Generar Contrato</a>
@@ -145,7 +148,7 @@
             <div class="row g-4">
                 <div class="col-md-6">
                     <h2 class="mb-4 border-bottom pb-2">Información Personal / Empresa</h2>
-                    <p>Somos una empresa dedicada a la gestión integral de proyectos de infraestructura y servicios de vivienda unifamiliar. Nuestra misión es formalizar y agilizar los procesos legales y de construcción mediante tecnología eficiente.</p>
+                    <p>Somos una empresa dedicada a la gestión integral de proyectos de infraestructura...</p>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item"><strong>Ubicación:</strong> Ciudad de México, México</li>
                         <li class="list-group-item"><strong>Contacto:</strong> contacto@tuempresa.com</li>
@@ -311,11 +314,15 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
+        // Este script se ejecuta cuando el HTML ha sido procesado completamente
         document.addEventListener('DOMContentLoaded', () => {
+            // Lee parámetros de la URL (por ejemplo: ?login=success)
             const urlParams = new URLSearchParams(window.location.search);
-            // Si Flask redirige aquí después del login, mostramos el formulario
+            
+            // Verificación del lado del cliente para sincronizar estados si fuera necesario
             if ({{ 'true' if current_user.is_authenticated else 'false' }}) {
-                // Alpine detectará isAuthenticated automáticamente
+                // Alpine detectará isAuthenticated automáticamente por el x-data inicial
+                console.log("Sesión activa detectada.");
             }
         });
     </script>

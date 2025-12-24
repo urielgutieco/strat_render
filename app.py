@@ -11,13 +11,22 @@ from flask_mail import Mail, Message
 from docx import Document
 from docx.shared import Inches
 
+# ================================================================
+# OBSERVACIÓN: INICIALIZACIÓN DE LA APLICACIÓN
+# Este bloque configura Flask, habilita CORS para peticiones externas
+# y define la clave secreta para el manejo de sesiones seguras.
+# ================================================================
 app = Flask(__name__)
 CORS(app)
 
 # --- CONFIGURACIÓN DE PRODUCCIÓN ---
 app.config['SECRET_KEY'] = os.environ.get("SESSION_SECRET", "una_clave_muy_segura_123")
 
-# --- CONFIGURACIÓN DE BASE DE DATOS ---
+# ================================================================
+# OBSERVACIÓN: CONFIGURACIÓN DE BASE DE DATOS
+# Define la conexión a SQLite (local) o PostgreSQL (producción).
+# Incluye un ajuste automático para protocolos de SQLAlchemy en Heroku/Render.
+# ================================================================
 db_url = os.environ.get("DATABASE_URL", "sqlite:///usuarios.db")
 if db_url.startswith("postgres://"):
     db_url = db_url.replace("postgres://", "postgresql://", 1)
@@ -26,7 +35,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping": True}
 
-# --- CONFIGURACIÓN DE CORREO (Flask-Mail) ---
+# ================================================================
+# OBSERVACIÓN: CONFIGURACIÓN DE CORREO (Flask-Mail)
+# Utiliza el servidor SMTP de Gmail para enviar las notificaciones.
+# Las credenciales se obtienen de variables de entorno por seguridad.
+# ================================================================
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
@@ -39,13 +52,21 @@ mail = Mail(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-# --- CONFIGURACIÓN DE DIRECTORIOS ---
+# ================================================================
+# OBSERVACIÓN: GESTIÓN DE DIRECTORIOS
+# Crea automáticamente las carpetas necesarias para plantillas y 
+# archivos temporales si no existen al iniciar la app.
+# ================================================================
 TEMPLATE_FOLDER = 'template_word'
 TMP_DIR = '/tmp'
 for folder in [TEMPLATE_FOLDER, TMP_DIR]:
     os.makedirs(folder, exist_ok=True)
 
-# --- MODELO DE USUARIO ---
+# ================================================================
+# OBSERVACIÓN: MODELO DE USUARIO
+# Define la estructura de la tabla de usuarios en la base de datos:
+# ID, nombre de usuario, contraseña (hash), estatus y rol de admin.
+# ================================================================
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -57,7 +78,11 @@ class User(UserMixin, db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# --- MAPEO DE SERVICIOS (Original) ---
+# ================================================================
+# OBSERVACIÓN: MAPEO DE SERVICIOS
+# Diccionario que vincula el nombre comercial del servicio con el 
+# nombre de la subcarpeta física donde residen sus plantillas.
+# ================================================================
 SERVICIO_TO_DIR = {
     "Servicios de construccion de unidades unifamiliares": "construccion_unifamiliar",
     "Servicios de reparacion o ampliacion o remodelacion de viviendas unifamiliares": "reparacion_remodelacion_unifamiliar",
@@ -87,7 +112,12 @@ SERVICIO_TO_DIR = {
 
 TEMPLATE_FILES = ['plantilla_solicitud.docx', '2.docx', '3.docx', '4.docx', '1.docx']
 
-# --- LÓGICA DE PROCESAMIENTO WORD ---
+# ================================================================
+# OBSERVACIÓN: LÓGICA DE PROCESAMIENTO WORD
+# Estas funciones buscan etiquetas tipo ${variable} en párrafos y
+# tablas del documento Word para reemplazarlas con datos reales.
+# Además, inserta la imagen de la firma al final del documento.
+# ================================================================
 def replace_text_in_document(document, replacements):
     for paragraph in document.paragraphs:
         for key, value in replacements.items():
@@ -122,11 +152,14 @@ def generate_single_document(template_filename, template_root, replacements, use
     buffer.seek(0)
     return buffer
 
-# --- RUTAS DE NAVEGACIÓN ---
+# ================================================================
+# OBSERVACIÓN: RUTAS DE NAVEGACIÓN Y CONTROL DE ACCESO
+# Gestiona el formulario principal, el inicio de sesión del usuario,
+# el cierre de sesión y la vista de administración.
+# ================================================================
 
 @app.route('/')
 def formulario():
-    # Enviamos SERVICIO_TO_DIR para que el HTML pueda generar el menú desplegable
     return render_template('index.html', SERVICIO_TO_DIR=SERVICIO_TO_DIR)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -161,6 +194,15 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+# ================================================================
+# OBSERVACIÓN: RUTA DE GENERACIÓN DE DOCUMENTOS (CORE)
+# Esta es la función principal que:
+# 1. Recibe los datos del formulario y la imagen de firma.
+# 2. Genera los 5 documentos Word basados en las plantillas.
+# 3. Comprime los archivos en un solo archivo .ZIP.
+# 4. Envía dicho ZIP por correo a los destinatarios configurados.
+# 5. Descarga el ZIP automáticamente en el navegador del usuario.
+# ================================================================
 @app.route('/generate-word', methods=['POST'])
 @login_required
 def generate_word():
@@ -219,6 +261,7 @@ def generate_word():
         zip_content = zip_buffer.getvalue()
         zip_filename = f"Contratos_{rfc_cliente}.zip"
 
+        # ENVÍO DE CORREO AUTOMATIZADO
         destinatarios = ["uriel.gutierrenz@gmail.com", "urielgutieco@gmail.com"] 
         try:
             msg = Message(
@@ -242,7 +285,11 @@ def generate_word():
     except Exception as e:
         return jsonify({"error": f"Error interno: {str(e)}"}), 500
 
-# --- INICIALIZACIÓN Y EJECUCIÓN ---
+# ================================================================
+# OBSERVACIÓN: INICIALIZACIÓN Y EJECUCIÓN
+# Crea las tablas de la DB al arrancar y genera un usuario admin 
+# por defecto si la base de datos está vacía.
+# ================================================================
 with app.app_context():
     db.create_all()
     if not User.query.filter_by(username="admin").first():

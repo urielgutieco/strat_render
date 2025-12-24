@@ -7,15 +7,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
     <style>
+        /* Bloque de variables CSS: Define los colores base para todo el documento */
         :root {
-            --primary: #6366f1;
-            --primary-hover: #818cf8;
-            --bg-dark: #020617;
-            --card-bg: rgba(255, 255, 255, .06);
-            --text-main: #ffffff;
-            --text-dim: #94a3b8;
+            --primary: #6366f1;         /* Color morado principal */
+            --primary-hover: #818cf8;   /* Color morado claro para el cursor */
+            --bg-dark: #020617;         /* Fondo azul casi negro */
+            --card-bg: rgba(255, 255, 255, .06); /* Fondo semi-transparente */
+            --text-main: #ffffff;       /* Color de texto blanco */
+            --text-dim: #94a3b8;        /* Color de texto grisáceo */
         }
 
+        /* Estilos base del cuerpo: Centra todo el contenido en pantalla */
         body {
             margin: 0;
             min-height: 100vh;
@@ -29,17 +31,19 @@
             box-sizing: border-box;
         }
 
-        /* Contenedores Principales */
+        /* Contenedores Principales: Controlan el ancho de la tarjeta según el estado */
         .container {
             width: 100%;
             max-width: 450px;
             transition: max-width 0.3s ease;
         }
 
+        /* Esta clase se añade vía JS para ensanchar la vista al entrar al formulario */
         .container.dashboard-mode {
             max-width: 800px;
         }
 
+        /* Estilo de la tarjeta: Efecto de cristal (backdrop-filter) y sombras */
         .card {
             background: var(--card-bg);
             padding: 40px;
@@ -61,7 +65,7 @@
             text-align: center;
         }
 
-        /* Formulario y Inputs */
+        /* Formulario y Inputs: Configuración de espaciados y campos de texto */
         .form-group {
             margin-bottom: 20px;
             text-align: left;
@@ -87,17 +91,19 @@
             outline: none;
         }
 
+        /* Cambio de color cuando el usuario hace clic en un campo */
         input:focus, select:focus, textarea:focus {
             border-color: var(--primary);
             background: rgba(255, 255, 255, .1);
         }
 
+        /* Fondo para las opciones del menú desplegable */
         option {
             background: #1e1b4b;
             color: white;
         }
 
-        /* Botones */
+        /* Estilo de Botones: Degradado y efectos de interacción */
         button {
             width: 100%;
             padding: 14px;
@@ -116,6 +122,7 @@
             transform: translateY(-1px);
         }
 
+        /* Botón de salida con colores rojizos para advertir la acción */
         .btn-logout {
             margin-top: 20px;
             background: transparent;
@@ -129,6 +136,7 @@
             border-color: #fca5a5;
         }
 
+        /* Clase para mensajes de error en rojo */
         .error {
             margin-top: 12px;
             color: #fca5a5;
@@ -136,7 +144,7 @@
             text-align: center;
         }
 
-        /* Control de vistas */
+        /* Oculta el formulario y el botón de salida al cargar la página por primera vez */
         #form-solicitud, #logout-btn {
             display: none;
         }
@@ -312,6 +320,11 @@
 
 
     <script>
+        /**
+         * Función: login()
+         * Uso: Valida el acceso del usuario.
+         * Lógica: Si el usuario es 'uriel' y el pass es '123456', intercambia las vistas de Login y Formulario.
+         */
         function login() {
             const userInp = document.getElementById('user').value;
             const passInp = document.getElementById('password').value;
@@ -320,9 +333,10 @@
 
             // Credenciales solicitadas
             if (userInp === "uriel" && passInp === "123456") {
-                // Ocultar login, mostrar cuestionario
+                // Ocultar login, mostrar cuestionario mediante manipulación de estilo inline
                 document.getElementById('login-section').style.display = 'none';
                 document.getElementById('form-solicitud').style.display = 'block';
+                // Cambia el ancho del contenedor para el formulario
                 container.classList.add('dashboard-mode');
                 errorDiv.textContent = "";
             } else {
@@ -330,16 +344,25 @@
             }
         }
 
+        /**
+         * Función: logout()
+         * Uso: Regresa al estado inicial.
+         * Lógica: Recarga la página por completo, lo que resetea variables y vistas.
+         */
         function logout() {
-            // Recargar la página para limpiar el estado
             location.reload();
         }
 
-        // Manejador del formulario
+        /**
+         * Manejador de Formulario: onsubmit
+         * Uso: Procesa los datos del formulario al enviarse.
+         * Lógica: e.preventDefault() evita el envío por defecto para permitir manejo con JavaScript.
+         */
         document.getElementById('solicitudForm').onsubmit = function(e) {
             e.preventDefault();
+            // Notificación visual de éxito simulado
             alert("Simulación: Generando archivo Word con los datos de " + document.getElementById('razon_social').value);
-            // Aquí iría tu lógica de fetch para generar el Word
+            // Aquí se conectaría con la API o librería para generar el documento Word.
         };
     </script>
 </body>
