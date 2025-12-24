@@ -1,352 +1,241 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#0b1020">
-  <title>Strat &amp; Tax | Plataforma Fiscal Empresarial</title>
-  <meta name="description" content="Plataforma fiscal empresarial: automatización documental, cumplimiento y trazabilidad sobre AWS.">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="style2.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Servicios y Contratos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        :root { --primary-color: #2c3e50; --secondary-color: #34495e; }
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .navbar { background-color: var(--primary-color); }
+        .hero-section { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1503387762-592dea58ef23?auto=format&fit=crop&w=1300&q=80'); 
+                        background-size: cover; color: white; padding: 100px 0; }
+        .card { border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-primary { background-color: var(--primary-color); border: none; }
+        .btn-primary:hover { background-color: var(--secondary-color); }
+    </style>
 </head>
-<body>
+<body x-data="{ section: 'inicio', isAuthenticated: {{ 'true' if current_user.is_authenticated else 'false' }} }">
 
-  <div class="fx" aria-hidden="true">
-    <div class="fx-orb fx-orb--1"></div>
-    <div class="fx-orb fx-orb--2"></div>
-    <div class="fx-orb fx-orb--3"></div>
-    <div class="fx-grid"></div>
-    <div class="fx-vignette"></div>
-  </div>
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#" @click="section = 'inicio'">Mi Empresa</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="#" @click="section = 'inicio'">Inicio</a>
+                <template x-if="!isAuthenticated">
+                    <a class="nav-link" href="#" @click="section = 'login'">Acceder</a>
+                </template>
+                <template x-if="isAuthenticated">
+                    <div class="d-flex align-items-center">
+                        <a class="nav-link" href="#" @click="section = 'formulario'">Generar Contrato</a>
+                        <a class="nav-link text-warning" href="{{ url_for('logout') }}">Cerrar Sesión</a>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </nav>
 
-  <header class="topbar" role="banner">
-    <div class="container topbar__inner">
-      <a class="brand" href="index.html" aria-label="Inicio">
-        <span class="brand__mark" aria-hidden="true">
-          <img class="brand__logo" src="stratandtax.png" alt="" onerror="this.style.display='none'">
-          <span class="brand__fallback">S</span>
-        </span>
-        <span class="brand__meta">
-          <span class="brand__name">STRAT &amp; TAX</span>
-          <span class="brand__tag">Fiscal · Compliance · Automatización</span>
-        </span>
-      </a>
-
-      <nav class="nav" aria-label="Navegación principal">
-        <a class="nav__link" href="#solucion">Solución</a>
-        <a class="nav__link" href="#servicios">Servicios</a>
-        <a class="nav__link" href="#proceso">Proceso</a>
-        <a class="nav__link" href="#seguridad">Seguridad</a>
-        <a class="nav__link nav__link--cta" href="contacto.html">Acceso clientes</a>
-      </nav>
-
-      <button class="nav-toggle" type="button" aria-label="Abrir menú" aria-expanded="false" id="navToggle">
-        <span></span><span></span><span></span>
-      </button>
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
     </div>
 
-    <div class="nav-drawer" id="navDrawer" aria-hidden="true">
-      <div class="nav-drawer__inner">
-        <a class="nav-drawer__link" href="#solucion">Solución</a>
-        <a class="nav-drawer__link" href="#servicios">Servicios</a>
-        <a class="nav-drawer__link" href="#proceso">Proceso</a>
-        <a class="nav-drawer__link" href="#seguridad">Seguridad</a>
-        <a class="btn btn--primary btn--full" href="contacto.html">Acceso clientes →</a>
-      </div>
-    </div>
-  </header>
-
-  <main role="main">
-    <section class="hero" id="inicio">
-      <div class="container hero__inner">
-        <div class="hero__copy">
-          <div class="badge">
-            <span class="badge__dot" aria-hidden="true"></span>
-            Plataforma empresarial · AWS Ready · Flujos trazables
-          </div>
-
-          <h1 class="hero__title">
-            Fiscalidad corporativa con
-            <span class="text-gradient">precisión</span>,
-            <span class="text-gradient">control</span> y
-            <span class="text-gradient">velocidad</span>.
-          </h1>
-
-          <p class="hero__subtitle">
-            Automatizá generación de documentos, controlá el ciclo de órdenes y mantené cumplimiento
-            con procesos claros. Interfaz premium. Backend sólido.
-          </p>
-
-          <div class="hero__actions">
-            <a class="btn btn--primary" href="contacto.html">
-              Ingresar al sistema <span class="btn__icon" aria-hidden="true">→</span>
-            </a>
-            <a class="btn btn--ghost" href="#solucion">Ver solución</a>
-          </div>
-
-          <div class="hero__metrics" aria-label="Métricas clave">
-            <div class="metric">
-              <div class="metric__value">+99%</div>
-              <div class="metric__label">Consistencia documental</div>
+    <section x-show="section === 'inicio'" class="animate__animated animate__fadeIn">
+        <div class="hero-section text-center">
+            <div class="container">
+                <h1 class="display-4 fw-bold">Soluciones Profesionales en Construcción</h1>
+                <p class="lead">Ingeniería, Urbanismo y Mantenimiento a su alcance.</p>
+                <button @click="isAuthenticated ? section = 'formulario' : section = 'login'" class="btn btn-lg btn-light mt-3">Comenzar Solicitud</button>
             </div>
-            <div class="metric">
-              <div class="metric__value">24/7</div>
-              <div class="metric__label">Acceso seguro</div>
-            </div>
-            <div class="metric">
-              <div class="metric__value">Serverless</div>
-              <div class="metric__label">Escalabilidad AWS</div>
-            </div>
-          </div>
         </div>
 
-        <aside class="hero__panel" aria-label="Resumen ejecutivo">
-          <div class="card card--glass">
-            <div class="card__header">
-              <div class="card__title">Resumen ejecutivo</div>
-              <div class="pill">Enterprise</div>
-            </div>
-
-            <div class="card__body">
-              <ul class="check">
-                <li><span class="check__i" aria-hidden="true">✓</span><span>Automatización de Word/ZIP</span></li>
-                <li><span class="check__i" aria-hidden="true">✓</span><span>Flujos trazables por usuario</span></li>
-                <li><span class="check__i" aria-hidden="true">✓</span><span>Integración con email / almacenamiento</span></li>
-                <li><span class="check__i" aria-hidden="true">✓</span><span>Escalable y auditable</span></li>
-              </ul>
-              <div class="divider"></div>
-              <div class="mini-kpis">
-                <div class="mini-kpi">
-                  <div class="mini-kpi__k">Riesgo ↓</div>
-                  <div class="mini-kpi__v">Control</div>
+        <div class="container my-5">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h2 class="mb-4 border-bottom pb-2">Información Personal / Empresa</h2>
+                    <p>Somos una empresa dedicada a la gestión integral de proyectos de infraestructura y servicios de vivienda unifamiliar. Nuestra misión es formalizar y agilizar los procesos legales y de construcción mediante tecnología eficiente.</p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>Ubicación:</strong> Ciudad de México, México</li>
+                        <li class="list-group-item"><strong>Contacto:</strong> contacto@tuempresa.com</li>
+                        <li class="list-group-item"><strong>Especialidad:</strong> Ingeniería Civil y Desarrollo Urbano</li>
+                    </ul>
                 </div>
-                <div class="mini-kpi">
-                  <div class="mini-kpi__k">Tiempo ↓</div>
-                  <div class="mini-kpi__v">Automatización</div>
+                <div class="col-md-6">
+                    <h2 class="mb-4 border-bottom pb-2">Nuestros Servicios</h2>
+                    <div class="accordion" id="serviciosAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#serv1">Vivienda Unifamiliar</button>
+                            </h2>
+                            <div id="serv1" class="accordion-collapse collapse show" data-bs-parent="#serviciosAccordion">
+                                <div class="accordion-body">Construcción, reparación, ampliación y remodelación de casas y casas móviles.</div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#serv2">Desarrollo Urbano</button>
+                            </h2>
+                            <div id="serv2" class="accordion-collapse collapse" data-bs-parent="#serviciosAccordion">
+                                <div class="accordion-body">Planificación urbana, alumbrado público y gestión de barrios marginales.</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="mini-kpi">
-                  <div class="mini-kpi__k">Decisión ↑</div>
-                  <div class="mini-kpi__v">Reportes</div>
+            </div>
+        </div>
+    </section>
+
+    <section x-show="section === 'login'" class="container my-5 py-5" x-cloak>
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="card p-4">
+                    <h3 class="text-center mb-4">Iniciar Sesión</h3>
+                    <form action="{{ url_for('login') }}" method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Usuario</label>
+                            <input type="text" name="user" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña</label>
+                            <input type="password" name="password" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Entrar</button>
+                        <button type="button" @click="section = 'inicio'" class="btn btn-link w-100 mt-2 text-muted">Volver al inicio</button>
+                    </form>
                 </div>
-              </div>
             </div>
-
-            <div class="card__footer">
-              <a class="btn btn--soft" href="contacto.html">Acceder</a>
-              <span class="muted">Acceso protegido · estándar corporativo</span>
-            </div>
-          </div>
-        </aside>
-      </div>
-      <div class="hero__fade" aria-hidden="true"></div>
+        </div>
     </section>
 
-    <section class="section" id="solucion">
-      <div class="container">
-        <header class="section__head">
-          <h2 class="h2">Una solución diseñada para operar</h2>
-          <p class="lead">Menos fricción, más control. Procesos claros desde el login hasta la entrega del ZIP.</p>
-        </header>
+    <section x-show="section === 'formulario'" class="container my-5" x-cloak>
+        {% if current_user.is_authenticated %}
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Generador de Contratos de Servicio</h4>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('generate_word') }}" method="POST" enctype="multipart/form-data">
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label class="form-label fw-bold">Seleccione el Servicio</label>
+                            <select name="servicio" class="form-select" required>
+                                {% for display_name in SERVICIO_TO_DIR.keys() %}
+                                    <option value="{{ display_name }}">{{ display_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
 
-        <div class="grid grid--3">
-          <article class="card card--feature">
-            <div class="icon icon--blue" aria-hidden="true">⧉</div>
-            <h3 class="h3">Automatización documental</h3>
-            <p class="muted">Generación automática de archivos, consistencia de plantillas y salida controlada.</p>
-          </article>
+                        <div class="col-md-6">
+                            <label class="form-label">Razón Social</label>
+                            <input type="text" name="razon_social" class="form-control" placeholder="Nombre completo o Empresa" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">RFC</label>
+                            <input type="text" name="r_f_c" class="form-control" placeholder="RFC del cliente" required>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label">Domicilio del Cliente</label>
+                            <input type="text" name="domicilio_del_cliente" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Teléfono</label>
+                            <input type="text" name="telefono_del__cliente" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Correo Electrónico</label>
+                            <input type="email" name="correo_del_cliente" class="form-control" required>
+                        </div>
 
-          <article class="card card--feature">
-            <div class="icon icon--gold" aria-hidden="true">⌁</div>
-            <h3 class="h3">Trazabilidad</h3>
-            <p class="muted">Control por usuario, estado del proceso y registro de actividad para auditoría interna.</p>
-          </article>
+                        <div class="col-md-3">
+                            <label class="form-label">Fecha de Inicio</label>
+                            <input type="date" name="fecha_de_inicio_del_servicio" class="form-control" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Fecha de Conclusión</label>
+                            <input type="date" name="fecha_de_conclusion_del_servicio" class="form-control" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Monto (Sin IVA)</label>
+                            <input type="text" name="monto_de_la_operacion_Sin_IVA" class="form-control" placeholder="Ej. 50000.00" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Forma de Pago</label>
+                            <input type="text" name="forma_de_pago" class="form-control" placeholder="Transferencia/Efectivo">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Cantidad</label>
+                            <input type="number" name="cantidad" class="form-control">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Unidad</label>
+                            <input type="text" name="unidad" class="form-control" placeholder="Pza/Servicio">
+                        </div>
 
-          <article class="card card--feature">
-            <div class="icon icon--green" aria-hidden="true">⇪</div>
-            <h3 class="h3">Escalabilidad</h3>
-            <p class="muted">Arquitectura preparada para crecer: performance y seguridad sin complejidad.</p>
-          </article>
+                        <div class="col-md-6">
+                            <label class="form-label">Nombre de quien firma</label>
+                            <input type="text" name="nombre_completo_de_la_persona_que_firma_la_solicitud" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Cargo</label>
+                            <input type="text" name="cargo_de_la_persona_que_firma_la_solicitud" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Imagen de Firma (PNG/JPG)</label>
+                            <input type="file" name="imagen_usuario" class="form-control" accept="image/*">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Fecha de Operación</label>
+                            <input type="date" name="fecha_de_operación" class="form-control">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Factura Relacionada</label>
+                            <input type="text" name="factura_relacionada_con_la_operación" class="form-control">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Evidencia (Fotos/Videos)</label>
+                            <input type="text" name="informe_si_cuenta_con_fotografias_videos_o_informacion_adicion" class="form-control" placeholder="Describa la evidencia disponible">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Comentarios Adicionales</label>
+                            <textarea name="comentarios" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 d-grid">
+                        <button type="submit" class="btn btn-success btn-lg">Generar y Enviar Documentos</button>
+                    </div>
+                </form>
+            </div>
         </div>
-      </div>
+        {% else %}
+        <div class="alert alert-danger">Debes iniciar sesión para ver este formulario.</div>
+        {% endif %}
     </section>
 
-    <section class="section section--alt" id="servicios">
-      <div class="container">
-        <header class="section__head">
-          <h2 class="h2">Servicios</h2>
-          <p class="lead">Un portafolio claro, corporativo y flexible para tu operación.</p>
-        </header>
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <p class="mb-0">&copy; 2024 Portal de Gestión de Contratos. Todos los derechos reservados.</p>
+    </footer>
 
-        <div class="grid grid--2">
-          <article class="card card--service">
-            <div class="service">
-              <div class="service__icon" aria-hidden="true">📌</div>
-              <div class="service__content">
-                <h3 class="h3">Consultoría fiscal</h3>
-                <p class="muted">Estrategias y optimización con foco en cumplimiento y riesgo.</p>
-                <ul class="bullets">
-                  <li>Planificación tributaria</li>
-                  <li>Revisión y consistencia documental</li>
-                  <li>Soporte a dirección</li>
-                </ul>
-              </div>
-            </div>
-          </article>
-
-          <article class="card card--service">
-            <div class="service">
-              <div class="service__icon" aria-hidden="true">🧾</div>
-              <div class="service__content">
-                <h3 class="h3">Auditoría &amp; control</h3>
-                <p class="muted">Estandarización, control interno y preparación para revisiones.</p>
-                <ul class="bullets">
-                  <li>Checklist y flujos</li>
-                  <li>Validación de datos</li>
-                  <li>Reporte ejecutivo</li>
-                </ul>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <div class="cta">
-          <div class="cta__copy">
-            <h3 class="h3">¿Listo para operar con estándar enterprise?</h3>
-            <p class="muted">Accedé a la plataforma y gestioná solicitudes en minutos.</p>
-          </div>
-          <a class="btn btn--primary" href="contacto.html">Ir a Acceso →</a>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="proceso">
-      <div class="container">
-        <header class="section__head">
-          <h2 class="h2">Proceso simple, resultado profesional</h2>
-          <p class="lead">Un flujo pensado para minimizar errores y acelerar entregas.</p>
-        </header>
-
-        <div class="timeline">
-          <div class="timeline__item">
-            <div class="timeline__dot" aria-hidden="true"></div>
-            <div class="timeline__content">
-              <div class="timeline__title">1) Acceso seguro</div>
-              <div class="muted">Login de cliente y sesión controlada.</div>
-            </div>
-          </div>
-          <div class="timeline__item">
-            <div class="timeline__dot" aria-hidden="true"></div>
-            <div class="timeline__content">
-              <div class="timeline__title">2) Carga de datos</div>
-              <div class="muted">Formulario completo y validado.</div>
-            </div>
-          </div>
-          <div class="timeline__item">
-            <div class="timeline__dot" aria-hidden="true"></div>
-            <div class="timeline__content">
-              <div class="timeline__title">3) Generación</div>
-              <div class="muted">Documentos + ZIP final, descarga controlada.</div>
-            </div>
-          </div>
-          <div class="timeline__item">
-            <div class="timeline__dot" aria-hidden="true"></div>
-            <div class="timeline__content">
-              <div class="timeline__title">4) Distribución</div>
-              <div class="muted">Envío a email y/o almacenamiento según configuración.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section section--alt" id="seguridad">
-      <div class="container">
-        <header class="section__head">
-          <h2 class="h2">Seguridad y estándar corporativo</h2>
-          <p class="lead">Capa visual pro + backend con controles de acceso. Sin “parches”, sin improvisación.</p>
-        </header>
-
-        <div class="grid grid--3">
-          <article class="card card--feature">
-            <div class="icon icon--blue" aria-hidden="true">🔒</div>
-            <h3 class="h3">Acceso controlado</h3>
-            <p class="muted">Roles, sesiones y tokens. Sin exposición innecesaria.</p>
-          </article>
-          <article class="card card--feature">
-            <div class="icon icon--green" aria-hidden="true">🧠</div>
-            <h3 class="h3">Validación</h3>
-            <p class="muted">Campos consistentes y flujo claro para reducir errores.</p>
-          </article>
-          <article class="card card--feature">
-            <div class="icon icon--gold" aria-hidden="true">🧾</div>
-            <h3 class="h3">Auditable</h3>
-            <p class="muted">Diseñado para operar con trazabilidad y evidencia.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section section--final">
-      <div class="container">
-        <div class="final">
-          <div class="final__copy">
-            <h2 class="h2">Entrá y generá tu solicitud</h2>
-            <p class="lead">Interfaz premium + flujo operativo. Listo para producción.</p>
-          </div>
-          <div class="final__actions">
-            <a class="btn btn--primary" href="contacto.html">Acceder ahora →</a>
-            <a class="btn btn--ghost" href="#inicio">Volver arriba</a>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer" role="contentinfo">
-    <div class="container footer__inner">
-      <div class="footer__left">
-        <div class="footer__brand">STRAT &amp; TAX</div>
-        <div class="muted">© 2025 · Todos los derechos reservados</div>
-      </div>
-      <div class="footer__right">
-        <a class="footer__link" href="#solucion">Solución</a>
-        <a class="footer__link" href="#servicios">Servicios</a>
-        <a class="footer__link" href="#proceso">Proceso</a>
-        <a class="footer__link" href="contacto.html">Acceso</a>
-      </div>
-    </div>
-  </footer>
-
-  <script>
-    (function () {
-      const toggle = document.getElementById('navToggle');
-      const drawer = document.getElementById('navDrawer');
-
-      function setOpen(open) {
-        document.body.classList.toggle('nav-open', open);
-        toggle?.setAttribute('aria-expanded', String(open));
-        drawer?.setAttribute('aria-hidden', String(!open));
-      }
-
-      toggle?.addEventListener('click', () => {
-        const open = !document.body.classList.contains('nav-open');
-        setOpen(open);
-      });
-
-      drawer?.querySelectorAll('a')?.forEach(a => {
-        a.addEventListener('click', () => setOpen(false));
-      });
-
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') setOpen(false);
-      });
-    })();
-  </script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            // Si Flask redirige aquí después del login, mostramos el formulario
+            if ({{ 'true' if current_user.is_authenticated else 'false' }}) {
+                // Alpine detectará isAuthenticated automáticamente
+            }
+        });
+    </script>
 </body>
 </html>
