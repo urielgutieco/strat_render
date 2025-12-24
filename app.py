@@ -49,10 +49,11 @@ login_manager.login_view = 'login'
 # ================================================================
 # OBSERVACIÓN: GESTIÓN DE DIRECTORIOS
 # ================================================================
-TEMPLATE_FOLDER = 'template_word'
+# Usar rutas absolutas basadas en la ubicación del script
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+TEMPLATE_FOLDER = os.path.join(BASE_DIR, 'template_word')
 TMP_DIR = '/tmp'
-for folder in [TEMPLATE_FOLDER, TMP_DIR]:
-    os.makedirs(folder, exist_ok=True)
+os.makedirs(TMP_DIR, exist_ok=True)
 
 # ================================================================
 # OBSERVACIÓN: MODELO DE USUARIO
@@ -129,7 +130,8 @@ def generate_single_document(template_filename, template_root, replacements, use
             document.add_paragraph()
             document.add_paragraph(data.get('nombre_completo_de_la_persona_que_firma_la_solicitud', ''))
             document.add_picture(user_image_path, width=Inches(2.5))
-        except Exception:
+        except Exception as e:
+            print(f"Error al insertar imagen: {e}")
             document.add_paragraph("⚠ Firma no disponible.")
     
     buffer = io.BytesIO()
@@ -189,7 +191,7 @@ def generate_word():
         carpeta_servicio = SERVICIO_TO_DIR.get(servicio)
         
         if not carpeta_servicio:
-            return jsonify({"error": "Servicio no válido"}), 400
+            return jsonify({"error": f"Servicio no válido: {servicio}"}), 400
 
         template_root = os.path.join(TEMPLATE_FOLDER, carpeta_servicio)
         numero_contrato = ''.join([str(random.randint(0, 9)) for _ in range(18)])
@@ -218,7 +220,8 @@ def generate_word():
         }
 
         zip_buffer = io.BytesIO()
-        # Usamos el bloque 'with' para asegurar que el ZIP se escriba correctamente en el buffer
+        files_added = 0
+
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
             for template in TEMPLATE_FILES:
                 try:
@@ -226,10 +229,14 @@ def generate_word():
                     base_name = os.path.splitext(template)[0]
                     filename = f"{base_name}_{numero_contrato}_{rfc_cliente}.docx"
                     zip_file.writestr(filename, doc_buf.getvalue())
+                    files_added += 1
                 except Exception as e:
-                    print(f"Error procesando {template}: {e}")
+                    print(f"Error procesando {template} en {template_root}: {e}")
 
-        # Importante: Obtener el valor después de cerrar el bloque del ZipFile
+        if files_added == 0:
+            return jsonify({"error": "No se pudo generar ningún documento. Verifique las plantillas."}), 500
+
+        zip_buffer.seek(0)
         zip_content = zip_buffer.getvalue()
         zip_filename = f"Contratos_{rfc_cliente}.zip"
 
@@ -256,6 +263,7 @@ def generate_word():
         )
 
     except Exception as e:
+        print(f"Error crítico en generate_word: {e}")
         return jsonify({"error": f"Error interno: {str(e)}"}), 500
 
 # ================================================================
