@@ -176,6 +176,8 @@
 
             <form id="solicitudForm" enctype="multipart/form-data">
 
+            <form id="solicitudForm" action="/generate-word" method="POST" enctype="multipart/form-data">
+
                 <div class="form-group">
                     <label for="servicio">Selecciona un servicio (*)</label>
                     <select id="servicio" name="servicio" required onchange="document.getElementById('descripcion_del_servicio').value = this.value">
@@ -347,14 +349,6 @@
             location.reload();
         }
 
-        /**
-         * Manejador de Formulario: onsubmit
-         */
-        document.getElementById('solicitudForm').onsubmit = function(e) {
-            e.preventDefault();
-            // Notificación visual de éxito simulado
-            alert("Simulación: Generando archivo Word con los datos de " + document.getElementById('razon_social').value);
-        };
     </script>
 </body>
 </html>
