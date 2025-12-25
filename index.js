@@ -130,13 +130,16 @@ app.post('/generate-word', upload.single('imagen_usuario'), async (req, res) => 
 
         const transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
-            port: 465,
-            secure: true,
+            port: 587,
+            secure: false, // false para puerto 587
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS
+            },
+            tls: {
+                rejectUnauthorized: false // Ayuda a evitar bloqueos por certificados en Render
             }
-        });
+    });
 
         await transporter.sendMail({
             from: `"Sistema SuperAdmin" <${process.env.EMAIL_USER}>`,
