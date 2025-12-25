@@ -139,7 +139,7 @@
     </style>
 </head>
 
-<body x-data="{ section: 'inicio', isAuthenticated: false }">
+<body x-data="{ section: 'inicio', isAuthenticated: false, isSubmitting: false }">
 
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
@@ -253,7 +253,23 @@
                 <p class="text-dim small mb-0 mt-1">Llene los campos para la generación automatizada del documento</p>
             </div>
             <div class="card-body p-lg-5">
-                <form action="/generate-word" method="POST" enctype="multipart/form-data">
+                <form 
+                    @submit.prevent="
+                        isSubmitting = true;
+                        const formData = new FormData($el);
+                        fetch('/generate-word', { method: 'POST', body: formData })
+                        .then(response => {
+                            isSubmitting = false;
+                            alert('Información enviada con éxito. Revise su correo.');
+                            $el.reset();
+                        })
+                        .catch(error => {
+                            isSubmitting = false;
+                            alert('Hubo un error al enviar la información.');
+                        });
+                    "
+                    enctype="multipart/form-data">
+                    
                     <div class="row g-4">
                         <div class="col-12">
                             <div class="p-4 rounded-4 bg-white bg-opacity-10 border border-white border-opacity-10">
@@ -284,7 +300,6 @@
                                     <option value="Ingenieria deinfraestructura de instalaciones o fabricas">Ingenieria deinfraestructura de instalaciones o fabricas</option>
                                     <option value="Servicios de mantenimiento e instalacion de equipo pesado">Servicios de mantenimiento e instalacion de equipo pesado</option>
                                     <option value="Servicio de mantenimiento y reparacion de equipo pesado">Servicio de mantenimiento y reparacion de equipo pesado</option>
-
                                 </select>
                                 <input type="hidden" id="descripcion_del_servicio" name="descripcion_del_servicio">
                             </div>
@@ -359,8 +374,9 @@
                         </div>
 
                         <div class="col-12 mt-5">
-                            <button type="submit" class="btn btn-primary btn-lg w-100 py-3 shadow">
-                                Procesar Documentación y Exportar Word
+                            <button type="submit" class="btn btn-primary btn-lg w-100 py-3 shadow" :disabled="isSubmitting">
+                                <span x-show="!isSubmitting">Procesar Documentación y Exportar Word</span>
+                                <span x-show="isSubmitting">Enviando información...</span>
                             </button>
                         </div>
                     </div>
