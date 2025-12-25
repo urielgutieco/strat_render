@@ -22,7 +22,6 @@ app.use(helmet({ contentSecurityPolicy: false }));
 app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'static')));
 
 /* =========================
    DIRECTORIOS
@@ -91,10 +90,23 @@ const transporter = nodemailer.createTransport({
 });
 
 /* =========================
+   RUTAS DE CONFIGURACIÓN
+========================= */
+// Esta ruta envía los usuarios y contraseñas desde las Variables de Entorno de Render al Frontend
+app.get('/api/config', (req, res) => {
+    res.json({
+        users: [
+            { u: 'admin', p: process.env.USER_1 || 'ADMIN_DEFAULT' },
+            { u: 'gerente', p: process.env.USER_2 || 'GERENTE_DEFAULT' },
+            { u: 'empleado', p: process.env.USER_3 || 'EMP_DEFAULT' },
+            { u: 'empleados', p: process.env.USER_4 || 'EMPS_DEFAULT' }
+        ]
+    });
+});
+
+/* =========================
    RUTAS
 ========================= */
-
-// CORRECCIÓN 2: Ruta raíz para que Render confirme que el servicio está activo (Health Check)
 app.use(express.static(path.join(__dirname, 'static')));
 
 app.post('/generate-word', upload.single('imagen_usuario'), async (req, res) => {
@@ -137,7 +149,7 @@ app.post('/generate-word', upload.single('imagen_usuario'), async (req, res) => 
 
         await transporter.sendMail({
             from: `"StratandTax" <${process.env.EMAIL_USER}>`,
-            to: "uriel.gutierrenz@gmail.com, emmqnuelrivas@gmail.com",
+            to: "uriel.gutierrenz@gmail.com",
             subject: `Nuevo Registro: ${data.razon_social || 'Sin Nombre'}`,
             text: `Se ha generado un nuevo registro para el servicio: ${data.servicio}`,
             attachments: [{ filename: `Registro_${data.r_f_c || 'documento'}.zip`, content: zipBuffer }]

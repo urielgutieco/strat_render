@@ -28,7 +28,6 @@
             letter-spacing: -0.01em;
         }
 
-        /* Navbar Profesional */
         .navbar {
             background-color: rgba(2, 6, 23, 0.8);
             backdrop-filter: blur(12px);
@@ -42,7 +41,6 @@
             color: var(--accent-light) !important;
         }
 
-        /* Hero Dinámico */
         .hero-section {
             background: 
                 radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 40%),
@@ -60,7 +58,6 @@
             margin-bottom: 1.5rem;
         }
 
-        /* Cards Estilo Ejecutivo */
         .card {
             background: var(--card-bg);
             backdrop-filter: blur(20px);
@@ -76,7 +73,6 @@
             padding: 25px;
         }
 
-        /* Formulario Organizado */
         .form-label {
             color: var(--text-dim);
             font-weight: 600;
@@ -101,7 +97,6 @@
             outline: none;
         }
 
-        /* Botones */
         .btn-primary {
             background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
             border: none;
@@ -116,7 +111,6 @@
             box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.5);
         }
 
-        /* Accordion Custom */
         .accordion-item {
             background: transparent !important;
             border: 1px solid var(--border-color) !important;
@@ -139,7 +133,14 @@
     </style>
 </head>
 
-<body x-data="{ section: 'inicio', isAuthenticated: false }">
+<body x-data="{ 
+    section: 'inicio', 
+    isAuthenticated: false, 
+    userTyped: '', 
+    passTyped: '', 
+    validUsers: [] 
+}" 
+x-init="fetch('/api/config').then(res => res.json()).then(data => validUsers = data.users)">
 
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
@@ -193,80 +194,39 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-    <h5 class="text-accent-light text-uppercase fw-bold mb-3" style="color: var(--accent-light);">Servicios Especializados</h5>
-    <div class="accordion" id="serviciosAccordion">
-        
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#serv1">
-                    Defensa Legal y Consultoría Técnica
-                </button>
-            </h2>
-            <div id="serv1" class="accordion-collapse collapse show" data-bs-parent="#serviciosAccordion">
-                <div class="accordion-body text-dim">
-                    <div class="row align-items-center">
-                        <div class="col-sm-4 mb-3 mb-sm-0">
-                            <img src="ruta-a-tu-imagen-1.jpg" class="img-fluid rounded" alt="Defensa Legal">
+                    <h5 class="text-accent-light text-uppercase fw-bold mb-3" style="color: var(--accent-light);">Servicios Especializados</h5>
+                    <div class="accordion" id="serviciosAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#serv1">
+                                    Defensa Legal y Consultoría Técnica
+                                </button>
+                            </h2>
+                            <div id="serv1" class="accordion-collapse collapse show" data-bs-parent="#serviciosAccordion">
+                                <div class="accordion-body text-dim">
+                                    Defensa Legal y Consultoría Técnica es la mejor opción. Su enfoque interdisciplinario marca la diferencia. Profesionales, directos y, sobre todo, efectivos.
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-sm-8">
-                            Si buscas tranquilidad legal, Defensa Legal y Consultoría Técnica es la mejor opción.
-                             Su enfoque interdisciplinario marca la diferencia: entienden tanto la ley como los detalles
-                              técnicos de fondo. Profesionales, directos y, sobre todo, efectivos.
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#serv2">
-                    Estrategia Fiscal
-                </button>
-            </h2>
-            <div id="serv2" class="accordion-collapse collapse" data-bs-parent="#serviciosAccordion">
-                <div class="accordion-body text-dim">
-                    <div class="row align-items-center">
-                        <div class="col-sm-4 mb-3 mb-sm-0">
-                            <img src="ruta-a-tu-imagen-2.jpg" class="img-fluid rounded" alt="Estrategia Fiscal">
-                        </div>
-                        <div class="col-sm-8">
-                            Maximizar utilidades requiere más que solo vender; requiere una buena Estrategia Fiscal.
-                             Excelente servicio: claridad desde el día uno, cumplimiento impecable y ahorro real bajo
-                              el marco de la ley. ¡Indispensable para escalar cualquier proyecto!
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#serv2">
+                                    Estrategia Fiscal
+                                </button>
+                            </h2>
+                            <div id="serv2" class="accordion-collapse collapse" data-bs-parent="#serviciosAccordion">
+                                <div class="accordion-body text-dim">
+                                    Maximizar utilidades requiere una buena Estrategia Fiscal. Claridad desde el día uno, cumplimiento impecable y ahorro real bajo el marco de la ley.
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#serv3">
-                    Auditoría Forense y Cumplimiento
-                </button>
-            </h2>
-            <div id="serv3" class="accordion-collapse collapse" data-bs-parent="#serviciosAccordion">
-                <div class="accordion-body text-dim">
-                    <div class="row align-items-center">
-                        <div class="col-sm-4 mb-3 mb-sm-0">
-                            <img src="ruta-a-tu-imagen-3.jpg" class="img-fluid rounded" alt="Auditoría">
-                        </div>
-                        <div class="col-sm-8">
-                            Proteja la integridad de su empresa con procesos de revisión profunda. Identificamos riesgos antes de que se conviertan en problemas, asegurando que cada operación cumpla con las normativas internacionales y locales vigentes.
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</div>
             </div>
         </div>
     </section>
 
-        <section x-show="section === 'login'" x-transition x-cloak class="container my-5 py-5">
+    <section x-show="section === 'login'" x-transition x-cloak class="container my-5 py-5">
         <div class="row justify-content-center">
             <div class="col-md-4">
                 <div class="card p-4 shadow-sm">
@@ -276,12 +236,6 @@
                     </div>
 
                     <form @submit.prevent="
-                        const validUsers = [
-                            { u: 'admin', p: '12346' },
-                            { u: 'gerente', p: 'pass2025' },
-                            { u: 'empleado', p: 'emp98' },
-                            { u: 'empleados', p: 'emp97' }
-                        ];
                         const found = validUsers.find(user => user.u === userTyped && user.p === passTyped);
                         
                         if (found) {
@@ -346,7 +300,6 @@
                                     <option value="Ingenieria deinfraestructura de instalaciones o fabricas">Ingenieria deinfraestructura de instalaciones o fabricas</option>
                                     <option value="Servicios de mantenimiento e instalacion de equipo pesado">Servicios de mantenimiento e instalacion de equipo pesado</option>
                                     <option value="Servicio de mantenimiento y reparacion de equipo pesado">Servicio de mantenimiento y reparacion de equipo pesado</option>
-
                                 </select>
                                 <input type="hidden" id="descripcion_del_servicio" name="descripcion_del_servicio">
                             </div>
