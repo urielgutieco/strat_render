@@ -95,9 +95,7 @@ const transporter = nodemailer.createTransport({
 ========================= */
 
 // CORRECCIÓN 2: Ruta raíz para que Render confirme que el servicio está activo (Health Check)
-app.get('/', (req, res) => {
-    res.send('Servidor activo y funcionando.');
-});
+app.use(express.static(path.join(__dirname, 'static')));
 
 app.post('/generate-word', upload.single('imagen_usuario'), async (req, res) => {
     try {
