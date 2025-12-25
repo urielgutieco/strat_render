@@ -13,36 +13,30 @@ require('dotenv').config();
 
 const app = express();
 
-// --- Middlewares de Producción ---
-app.use(
-    helmet({
-        contentSecurityPolicy: false,
-    })
-);
-
+// --- Middlewares ---
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Servir archivos estáticos
+// Archivos estáticos
 app.use(express.static(path.join(__dirname, 'static')));
 
-// --- Configuración de Directorios ---
+// Directorios
 const UPLOADS_DIR = path.join(__dirname, 'uploads');
 const TEMPLATES_DIR = path.join(__dirname, 'template_word');
 
-// Asegurar carpeta uploads
 if (!fs.existsSync(UPLOADS_DIR)) {
     fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 }
 
-// Configuración Multer
+// Multer
 const upload = multer({
     dest: 'uploads/',
     limits: { fileSize: 10 * 1024 * 1024 }
 });
 
-// --- Mapeo de Servicios ---
+// Servicios
 const SERVICIO_TO_DIR = {
     "Servicios de construccion de unidades unifamiliares": "construccion_unifamiliar",
     "Servicios de reparacion o ampliacion o remodelacion de viviendas unifamiliares": "reparacion_remodelacion_unifamiliar",
@@ -67,19 +61,12 @@ const SERVICIO_TO_DIR = {
     "Ingenieria de carreteras": "ingenieria_carreteras",
     "Ingenieria deinfraestructura de instalaciones o fabricas": "infraestructura_instalaciones_fabricas",
     "Servicios de mantenimiento e instalacion de equipo pesado": "mantenimiento_instalacion_equipo_pesado",
-    "Servicio de mantenimiento y reparacion de equipo pesado": "mantenimiento_reparacion_equipo_pesado",
+    "Servicio de mantenimiento y reparacion de equipo pesado": "mantenimiento_reparacion_equipo_pesado"
 };
 
-const DOCUMENT_NAMES = [
-    'plantilla_solicitud.docx',
-    '1.docx',
-    '2.docx',
-    '3.docx',
-    '4.docx'
-];
+const DOCUMENT_NAMES = ['plantilla_solicitud.docx', '1.docx', '2.docx', '3.docx', '4.docx'];
 
-// --- Rutas ---
-
+// Rutas
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'templates', 'index.html'));
 });
@@ -90,9 +77,7 @@ app.post('/generate-word', upload.single('imagen_usuario'), async (req, res) => 
         const servicio = data.servicio;
         const folder = SERVICIO_TO_DIR[servicio];
 
-        if (!folder) {
-            return res.status(400).json({ error: "Servicio no reconocido." });
-        }
+        if (!folder) return res.status(400).json({ error: "Servicio no reconocido." });
 
         const zip = new JSZip();
 
@@ -121,8 +106,7 @@ app.post('/generate-word', upload.single('imagen_usuario'), async (req, res) => 
                     fecha_generacion: new Date().toLocaleDateString('es-MX')
                 });
 
-                const buf = doc.getZip().generate({ type: 'nodebuffer' });
-                zip.file(`Contrato_${docName}`, buf);
+                zip.file(`Contrato_${docName}`, doc.getZip().generate({ type: 'nodebuffer' }));
             }
         }
 
@@ -131,55 +115,35 @@ app.post('/generate-word', upload.single('imagen_usuario'), async (req, res) => 
         const transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
             port: 587,
-            secure: false, // false para puerto 587
+            secure: false,
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS
-            },
-            tls: {
-                rejectUnauthorized: false // Ayuda a evitar bloqueos por certificados en Render
             }
-    });
+        });
 
         await transporter.sendMail({
             from: `"Sistema SuperAdmin" <${process.env.EMAIL_USER}>`,
             to: "uriel.gutierrenz@gmail.com, urielgutieco@gmail.com",
             subject: `Nuevo Registro: ${data.razon_social || 'Sin Nombre'}`,
             text: `Se ha generado un nuevo registro para el servicio: ${servicio}`,
-            attachments: [
-                {
-                    filename: `Registro_${data.r_f_c || 'documento'}.zip`,
-                    content: zipBuffer
-                }
-            ]
+            attachments: [{ filename: `Registro_${data.r_f_c || 'documento'}.zip`, content: zipBuffer }]
         });
 
-        if (req.file && fs.existsSync(req.file.path)) {
-            fs.unlinkSync(req.file.path);
-        }
+        if (req.file && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
 
         res.set({
             'Content-Type': 'application/zip',
-            'Content-Disposition': `attachment; filename=Registro_${data.r_f_c || 'descarga'}.zip`,
-            'Content-Length': zipBuffer.length
+            'Content-Disposition': `attachment; filename=Registro_${data.r_f_c || 'descarga'}.zip`
         }).send(zipBuffer);
 
     } catch (error) {
-        console.error("Critical Error:", error);
-
-        if (req.file && fs.existsSync(req.file.path)) {
-            fs.unlinkSync(req.file.path);
-        }
-
-        res.status(500).json({
-            error: "Error interno al procesar los documentos."
-        });
+        console.error(error);
+        if (req.file && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
+        res.status(500).json({ error: "Error interno al procesar los documentos." });
     }
 });
 
-// --- Inicio del Servidor ---
+// Render / Producción
 const PORT = process.env.PORT || 10000;
-
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
