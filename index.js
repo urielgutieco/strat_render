@@ -12,6 +12,8 @@ const compression = require('compression');
 require('dotenv').config();
 
 const app = express();
+// CORRECCIÓN 1: Definir PORT desde process.env para que Render pueda conectar
+const PORT = process.env.PORT || 10000;
 
 /* =========================
    MIDDLEWARES
@@ -91,6 +93,12 @@ const transporter = nodemailer.createTransport({
 /* =========================
    RUTAS
 ========================= */
+
+// CORRECCIÓN 2: Ruta raíz para que Render confirme que el servicio está activo (Health Check)
+app.get('/', (req, res) => {
+    res.send('Servidor activo y funcionando.');
+});
+
 app.post('/generate-word', upload.single('imagen_usuario'), async (req, res) => {
     try {
         const data = req.body;
@@ -151,5 +159,6 @@ app.post('/generate-word', upload.single('imagen_usuario'), async (req, res) => 
 /* =========================
    SERVER
 ========================= */
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Servidor ejecutándose en el puerto ${PORT}`);
+});
