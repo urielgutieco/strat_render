@@ -7,41 +7,42 @@ const Docxtemplater = require('docxtemplater');
 const ImageModule = require('docxtemplater-image-module-free');
 const nodemailer = require('nodemailer');
 const JSZip = require('jszip');
-const helmet = require('helmet'); // Seguridad de cabeceras
-const compression = require('compression'); // Compresión de respuesta para mayor velocidad
+const helmet = require('helmet');
+const compression = require('compression');
 require('dotenv').config();
 
 const app = express();
 
 // --- Middlewares de Producción ---
-// Helmet ayuda a proteger la app de vulnerabilidades web comunes
-app.use(helmet({
-    contentSecurityPolicy: false, 
-}));
-// Compression reduce el tamaño del cuerpo de la respuesta para mejorar el rendimiento
+app.use(
+    helmet({
+        contentSecurityPolicy: false,
+    })
+);
+
 app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Servir archivos estáticos (CSS, JS cliente, Imágenes)
+// Servir archivos estáticos
 app.use(express.static(path.join(__dirname, 'static')));
 
 // --- Configuración de Directorios ---
 const UPLOADS_DIR = path.join(__dirname, 'uploads');
 const TEMPLATES_DIR = path.join(__dirname, 'template_word');
 
-// Asegurar que la carpeta de subida existe
+// Asegurar carpeta uploads
 if (!fs.existsSync(UPLOADS_DIR)) {
     fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 }
 
-// Configuración de Multer para subida de archivos
-const upload = multer({ 
+// Configuración Multer
+const upload = multer({
     dest: 'uploads/',
-    limits: { fileSize: 10 * 1024 * 1024 } // Límite de seguridad: 10MB
+    limits: { fileSize: 10 * 1024 * 1024 }
 });
 
-// --- Mapeo de Servicios a Carpetas ---
+// --- Mapeo de Servicios ---
 const SERVICIO_TO_DIR = {
     "Servicios de construccion de unidades unifamiliares": "construccion_unifamiliar",
     "Servicios de reparacion o ampliacion o remodelacion de viviendas unifamiliares": "reparacion_remodelacion_unifamiliar",
@@ -69,7 +70,13 @@ const SERVICIO_TO_DIR = {
     "Servicio de mantenimiento y reparacion de equipo pesado": "mantenimiento_reparacion_equipo_pesado",
 };
 
-const DOCUMENT_NAMES = ['plantilla_solicitud.docx', '1.docx', '2.docx', '3.docx', '4.docx'];
+const DOCUMENT_NAMES = [
+    'plantilla_solicitud.docx',
+    '1.docx',
+    '2.docx',
+    '3.docx',
+    '4.docx'
+];
 
 // --- Rutas ---
 
@@ -83,11 +90,12 @@ app.post('/generate-word', upload.single('imagen_usuario'), async (req, res) => 
         const servicio = data.servicio;
         const folder = SERVICIO_TO_DIR[servicio];
 
-        if (!folder) return res.status(400).json({ error: "Servicio no reconocido." });
+        if (!folder) {
+            return res.status(400).json({ error: "Servicio no reconocido." });
+        }
 
         const zip = new JSZip();
 
-        // Configuración módulo de imágenes para el documento Word
         const imageOptions = {
             centered: false,
             getImage: (tagValue) => fs.readFileSync(tagValue),
@@ -120,11 +128,10 @@ app.post('/generate-word', upload.single('imagen_usuario'), async (req, res) => 
 
         const zipBuffer = await zip.generateAsync({ type: 'nodebuffer' });
 
-        // --- Configuración de Correo Electrónico ---
         const transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
             port: 465,
-            secure: true, 
+            secure: true,
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS
@@ -136,18 +143,18 @@ app.post('/generate-word', upload.single('imagen_usuario'), async (req, res) => 
             to: "uriel.gutierrenz@gmail.com, urielgutieco@gmail.com",
             subject: `Nuevo Registro: ${data.razon_social || 'Sin Nombre'}`,
             text: `Se ha generado un nuevo registro para el servicio: ${servicio}`,
-            attachments: [{
-                filename: `Registro_${data.r_f_c || 'documento'}.zip`,
-                content: zipBuffer
-            }]
+            attachments: [
+                {
+                    filename: `Registro_${data.r_f_c || 'documento'}.zip`,
+                    content: zipBuffer
+                }
+            ]
         });
 
-        // Limpieza de archivos temporales para optimizar espacio en el servidor
         if (req.file && fs.existsSync(req.file.path)) {
             fs.unlinkSync(req.file.path);
         }
 
-        // Respuesta al cliente con el archivo ZIP
         res.set({
             'Content-Type': 'application/zip',
             'Content-Disposition': `attachment; filename=Registro_${data.r_f_c || 'descarga'}.zip`,
@@ -156,15 +163,20 @@ app.post('/generate-word', upload.single('imagen_usuario'), async (req, res) => 
 
     } catch (error) {
         console.error("Critical Error:", error);
-        // Asegurar limpieza de archivos incluso en caso de error
-        if (req.file && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
-        res.status(500).json({ error: "Error interno al procesar los documentos." });
+
+        if (req.file && fs.existsSync(req.file.path)) {
+            fs.unlinkSync(req.file.path);
+        }
+
+        res.status(500).json({
+            error: "Error interno al procesar los documentos."
+        });
     }
 });
 
 // --- Inicio del Servidor ---
-// El puerto 10000 es el estándar de Render, pero usa el asignado por el entorno
 const PORT = process.env.PORT || 10000;
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
