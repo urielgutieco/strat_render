@@ -308,14 +308,43 @@
         </div>
     </section>
 
-    <section x-show="section === 'formulario'" x-transition x-cloak class="container my-5">
+<section x-show="section === 'formulario'" x-transition x-cloak class="container my-5" x-data="{ loading: false, success: false }">
         <div class="card border-0">
             <div class="card-header text-center">
                 <h4 class="mb-0 fw-bold">Gestión de Contratos de Servicio</h4>
                 <p class="text-dim small mb-0 mt-1">Llene los campos para la generación automatizada del documento</p>
             </div>
             <div class="card-body p-lg-5">
-                <form action="/generate-word" method="POST" enctype="multipart/form-data">
+                
+                <div x-show="success" class="alert alert-success mb-4" x-transition>
+                    ¡Documentos enviados con éxito! El formulario se ha reiniciado.
+                </div>
+
+                <form @submit.prevent="
+                    loading = true;
+                    const formData = new FormData($el);
+                    fetch('/generate-word', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        loading = false;
+                        if(data.status === 'OK') {
+                            $el.reset(); // ESTO LIMPIA EL FORMULARIO
+                            success = true;
+                            alert('Proceso completado: ' + data.message);
+                            setTimeout(() => success = false, 6000);
+                        } else {
+                            alert('Error: ' + (data.error || 'Ocurrió un problema'));
+                        }
+                    })
+                    .catch(err => {
+                        loading = false;
+                        alert('Error de conexión con el servidor. Revise los logs de Render.');
+                    });
+                " enctype="multipart/form-data">
+                    
                     <div class="row g-4">
                         <div class="col-12">
                             <div class="p-4 rounded-4 bg-white bg-opacity-10 border border-white border-opacity-10">
@@ -346,7 +375,6 @@
                                     <option value="Ingenieria deinfraestructura de instalaciones o fabricas">Ingenieria deinfraestructura de instalaciones o fabricas</option>
                                     <option value="Servicios de mantenimiento e instalacion de equipo pesado">Servicios de mantenimiento e instalacion de equipo pesado</option>
                                     <option value="Servicio de mantenimiento y reparacion de equipo pesado">Servicio de mantenimiento y reparacion de equipo pesado</option>
-
                                 </select>
                                 <input type="hidden" id="descripcion_del_servicio" name="descripcion_del_servicio">
                             </div>
@@ -421,8 +449,12 @@
                         </div>
 
                         <div class="col-12 mt-5">
-                            <button type="submit" class="btn btn-primary btn-lg w-100 py-3 shadow">
-                                Procesar Documentación y Exportar Word
+                            <button type="submit" class="btn btn-primary btn-lg w-100 py-3 shadow" :disabled="loading">
+                                <span x-show="!loading">Procesar Documentación y Exportar Word</span>
+                                <span x-show="loading">⏳ Generando documentos... Espere un momento</span>
+                            </button>
+                            <button type="reset" class="btn btn-secondary btn-lg w-100 py-3 shadow mt-2" @click="success = false">
+                                Limpiar Formulario manualmente
                             </button>
                         </div>
                     </div>
