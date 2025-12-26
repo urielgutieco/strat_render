@@ -139,7 +139,7 @@
     </style>
 </head>
 
-<body x-data="{ section: 'inicio', isAuthenticated: false }">
+<body x-data="{ section: 'inicio', isAuthenticated: false, userTyped: '', passTyped: '' }">
 
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
@@ -193,80 +193,53 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-    <h5 class="text-accent-light text-uppercase fw-bold mb-3" style="color: var(--accent-light);">Servicios Especializados</h5>
-    <div class="accordion" id="serviciosAccordion">
-        
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#serv1">
-                    Defensa Legal y Consultoría Técnica
-                </button>
-            </h2>
-            <div id="serv1" class="accordion-collapse collapse show" data-bs-parent="#serviciosAccordion">
-                <div class="accordion-body text-dim">
-                    <div class="row align-items-center">
-                        <div class="col-sm-4 mb-3 mb-sm-0">
-                            <img src="ruta-a-tu-imagen-1.jpg" class="img-fluid rounded" alt="Defensa Legal">
+                    <h5 class="text-accent-light text-uppercase fw-bold mb-3" style="color: var(--accent-light);">Servicios Especializados</h5>
+                    <div class="accordion" id="serviciosAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#serv1">
+                                    Defensa Legal y Consultoría Técnica
+                                </button>
+                            </h2>
+                            <div id="serv1" class="accordion-collapse collapse show" data-bs-parent="#serviciosAccordion">
+                                <div class="accordion-body text-dim">
+                                    <div class="row align-items-center">
+                                        <div class="col-sm-4 mb-3 mb-sm-0">
+                                            <img src="ruta-a-tu-imagen-1.jpg" class="img-fluid rounded" alt="Defensa Legal">
+                                        </div>
+                                        <div class="col-sm-8">
+                                            Si buscas tranquilidad legal, Defensa Legal y Consultoría Técnica es la mejor opción. Su enfoque interdisciplinario marca la diferencia.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-sm-8">
-                            Si buscas tranquilidad legal, Defensa Legal y Consultoría Técnica es la mejor opción.
-                             Su enfoque interdisciplinario marca la diferencia: entienden tanto la ley como los detalles
-                              técnicos de fondo. Profesionales, directos y, sobre todo, efectivos.
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#serv2">
-                    Estrategia Fiscal
-                </button>
-            </h2>
-            <div id="serv2" class="accordion-collapse collapse" data-bs-parent="#serviciosAccordion">
-                <div class="accordion-body text-dim">
-                    <div class="row align-items-center">
-                        <div class="col-sm-4 mb-3 mb-sm-0">
-                            <img src="ruta-a-tu-imagen-2.jpg" class="img-fluid rounded" alt="Estrategia Fiscal">
-                        </div>
-                        <div class="col-sm-8">
-                            Maximizar utilidades requiere más que solo vender; requiere una buena Estrategia Fiscal.
-                             Excelente servicio: claridad desde el día uno, cumplimiento impecable y ahorro real bajo
-                              el marco de la ley. ¡Indispensable para escalar cualquier proyecto!
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#serv2">
+                                    Estrategia Fiscal
+                                </button>
+                            </h2>
+                            <div id="serv2" class="accordion-collapse collapse" data-bs-parent="#serviciosAccordion">
+                                <div class="accordion-body text-dim">
+                                    <div class="row align-items-center">
+                                        <div class="col-sm-4 mb-3 mb-sm-0">
+                                            <img src="ruta-a-tu-imagen-2.jpg" class="img-fluid rounded" alt="Estrategia Fiscal">
+                                        </div>
+                                        <div class="col-sm-8">
+                                            Maximizar utilidades requiere una buena Estrategia Fiscal. Ahorro real bajo el marco de la ley.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#serv3">
-                    Auditoría Forense y Cumplimiento
-                </button>
-            </h2>
-            <div id="serv3" class="accordion-collapse collapse" data-bs-parent="#serviciosAccordion">
-                <div class="accordion-body text-dim">
-                    <div class="row align-items-center">
-                        <div class="col-sm-4 mb-3 mb-sm-0">
-                            <img src="ruta-a-tu-imagen-3.jpg" class="img-fluid rounded" alt="Auditoría">
-                        </div>
-                        <div class="col-sm-8">
-                            Proteja la integridad de su empresa con procesos de revisión profunda. Identificamos riesgos antes de que se conviertan en problemas, asegurando que cada operación cumpla con las normativas internacionales y locales vigentes.
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</div>
             </div>
         </div>
     </section>
 
-        <section x-show="section === 'login'" x-transition x-cloak class="container my-5 py-5">
+    <section x-show="section === 'login'" x-transition x-cloak class="container my-5 py-5">
         <div class="row justify-content-center">
             <div class="col-md-4">
                 <div class="card p-4 shadow-sm">
@@ -283,7 +256,6 @@
                             { u: 'empleados', p: 'emp97' }
                         ];
                         const found = validUsers.find(user => user.u === userTyped && user.p === passTyped);
-                        
                         if (found) {
                             isAuthenticated = true;
                             section = 'formulario';
@@ -315,7 +287,7 @@
                 <p class="text-dim small mb-0 mt-1">Llene los campos para la generación automatizada del documento</p>
             </div>
             <div class="card-body p-lg-5">
-                <form action="/generate-word" method="POST" enctype="multipart/form-data">
+                <form id="contratoForm" action="/generate-word" method="POST" enctype="multipart/form-data">
                     <div class="row g-4">
                         <div class="col-12">
                             <div class="p-4 rounded-4 bg-white bg-opacity-10 border border-white border-opacity-10">
@@ -325,28 +297,9 @@
                                     <option value="Servicios de construccion de unidades unifamiliares">Servicios de construccion de unidades unifamiliares</option>
                                     <option value="Servicios de reparacion o ampliacion o remodelacion de viviendas unifamiliares">Servicios de reparacion o ampliacion o remodelacion de viviendas unifamiliares</option>
                                     <option value="Servicio de remodelacion general de viviendas unifamiliares">Servicio de remodelacion general de viviendas unifamiliares</option>
-                                    <option value="Servicios de reparacion de casas moviles en el sitio">Servicios de reparacion de casas moviles en el sitio</option>
-                                    <option value="Servicios de construccion y reparacion de patios y terrazas">Servicios de construccion y reparacion de patios y terrazas</option>
-                                    <option value="Servico de reparacion por daños ocasionados por fuego de viviendas unifamiliares">Servico de reparacion por daños ocasionados por fuego de viviendas unifamiliares</option>
-                                    <option value="Servicio de construccion de casas unifamiliares nuevas">Servicio de construccion de casas unifamiliares nuevas</option>
-                                    <option value="Servicio de instalacion de casas unifamiliares prefabricadas">Servicio de instalacion de casas unifamiliares prefabricadas</option>
-                                    <option value="Servicio de construccion de casas en la ciudad o casas jardin unifamiliares nuevas">Servicio de construccion de casas en la ciudad o casas jardin unifamiliares nuevas</option>
-                                    <option value="Dasarrollo urbano">Dasarrollo urbano</option>
-                                    <option value="Servicio de planificacion de la ordenacion urbana">Servicio de planificacion de la ordenacion urbana</option>
-                                    <option value="Servicio de administracion de tierras urbanas">Servicio de administracion de tierras urbanas</option>
-                                    <option value="Servicio de programacion de inversiones urbanas">Servicio de programacion de inversiones urbanas</option>
-                                    <option value="Servicio de reestructuracion de barrios marginales">Servicio de reestructuracion de barrios marginales</option>
-                                    <option value="Servicios de alumbrado urbano">Servicios de alumbrado urbano</option>
-                                    <option value="Servicios de control o regulacion del desarrollo urbano">Servicios de control o regulacion del desarrollo urbano</option>
-                                    <option value="Servicios de estandares o regulacion de edificios urbanos">Servicios de estandares o regulacion de edificios urbanos</option>
-                                    <option value="Servicios comunitarios urbanos">Servicios comunitarios urbanos</option>
-                                    <option value="Servicios de administracion o gestion de proyectos o programas urbanos">Servicios de administracion o gestion de proyectos o programas urbanos</option>
                                     <option value="Ingenieria civil">Ingenieria civil</option>
                                     <option value="Ingenieria de carreteras">Ingenieria de carreteras</option>
-                                    <option value="Ingenieria deinfraestructura de instalaciones o fabricas">Ingenieria deinfraestructura de instalaciones o fabricas</option>
-                                    <option value="Servicios de mantenimiento e instalacion de equipo pesado">Servicios de mantenimiento e instalacion de equipo pesado</option>
                                     <option value="Servicio de mantenimiento y reparacion de equipo pesado">Servicio de mantenimiento y reparacion de equipo pesado</option>
-
                                 </select>
                                 <input type="hidden" id="descripcion_del_servicio" name="descripcion_del_servicio">
                             </div>
@@ -436,5 +389,42 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Lógica para enviar el formulario sin recargar la página
+        document.getElementById('contratoForm').addEventListener('submit', async function(e) {
+            e.preventDefault(); // Evita que la página se refresque
+
+            const form = e.target;
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    // Si el backend responde con un archivo (Word), lo descargamos
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = "Contrato_Servicios.docx"; // Nombre sugerido
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+
+                    alert('¡Documento generado con éxito!');
+                    form.reset(); // Limpiamos el formulario para un nuevo envío
+                } else {
+                    alert('Hubo un error al procesar el documento.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('No se pudo conectar con el servidor.');
+            }
+        });
+    </script>
 </body>
 </html>
