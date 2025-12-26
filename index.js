@@ -145,7 +145,7 @@ app.post('/generate-word', upload.single('imagen_usuario'), async (req, res) => 
 
         if (req.file && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
 
-        res.json({ status: "OK", message: "Documentos generados y enviados por correo." });
+        res.json({ status: "OK"});
 
     } catch (error) {
         console.error(error);
