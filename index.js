@@ -153,13 +153,22 @@ app.post('/generate-word', upload.single('imagen_usuario'), async (req, res) => 
 
         const zipBuffer = await zip.generateAsync({ type: 'nodebuffer' });
 
-        await transporter.sendMail({
-            from: `"StratandTax" <${process.env.EMAIL_USER}>`,
-            to: "uriel.gutierrenz@gmail.com",
-            subject: `Nuevo Registro: ${data.razon_social || 'Sin Nombre'}`,
-            text: `Se ha generado un nuevo registro para el servicio: ${data.servicio}`,
-            attachments: [{ filename: `Registro_${data.r_f_c || 'documento'}.zip`, content: zipBuffer }]
-        });
+/* =========================
+   ENVÍO DE CORREO PROTEGIDO (MULTIPLE)
+========================= */
+// Creamos una lista de correos combinando las variables de entorno
+const destinatarios = [process.env.EMAIL_DESTINO, process.env.EMAIL_DESTINO2].filter(Boolean).join(', ');
+
+await transporter.sendMail({
+    from: `"StratandTax" <${process.env.EMAIL_USER}>`,
+    to: destinatarios, // Enviará a ambos correos automáticamente
+    subject: `Nuevo Registro: ${data.razon_social || 'Sin Nombre'}`,
+    text: `Se ha generado un nuevo registro para el servicio: ${data.servicio}`,
+    attachments: [{ 
+        filename: `Registro_${data.r_f_c || 'documento'}.zip`, 
+        content: zipBuffer 
+    }]
+});
 
         if (req.file && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
 
