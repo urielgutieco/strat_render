@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <title>Sistema de Registro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    
+    <style>
+        /* Bloque de variables CSS */
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #818cf8;
+            --bg-dark: #020617;
+            --card-bg: rgba(255, 255, 255, .06);
+            --text-main: #ffffff;
+            --text-dim: #94a3b8;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at top, #1e1b4b, var(--bg-dark));
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            transition: max-width 0.3s ease;
+        }
+
+        .container.dashboard-mode {
+            max-width: 800px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1, h2 {
+            margin: 0 0 10px;
+            font-size: 28px;
+            text-align: center;
+        }
+
+        p {
+            color: var(--text-dim);
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, .15);
+            background: rgba(255, 255, 255, .05);
+            color: white;
+            font-family: inherit;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, .1);
+        }
+
+        option {
+            background: #1e1b4b;
+            color: white;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+            font-size: 16px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        #logout-btn {
+            margin-top: 20px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-dim);
+            display: none;
+        }
+
+        #logout-btn:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: #fca5a5;
+            border-color: #fca5a5;
+        }
+
+        .error {
+            margin-top: 12px;
+            color: #fca5a5;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        #form-solicitud {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+        <div class="card p-4">
+                <h3 class="text-center mb-4">Iniciar Sesión</h3>
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label">Usuario</label>
+                        <input type="text" name="user" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Contraseña</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Entrar</button>
+                </form>
+        </div>
+
+        <div id="form-solicitud" class="card">
+            <h2>Generar registro.</h2>
+            <p>Complete los campos a continuación</p>
+
+            <form id="solicitudForm">
+                <div class="form-group">
+                    <label for="servicio">Selecciona un servicio (*)</label>
+                    <select id="servicio" name="servicio" required onchange="document.getElementById('descripcion_del_servicio').value = this.value">
+                        <option value="" disabled selected>--- Elige una opción ---</option>
+                        <option value="Servicios de construccion de unidades unifamiliares">Servicios de construccion de unidades unifamiliares</option>
+                        <option value="Servicios de reparacion o ampliacion o remodelacion de viviendas unifamiliares">Servicios de reparacion o ampliacion o remodelacion de viviendas unifamiliares</option>
+                        <option value="Servicio de remodelacion general de viviendas unifamiliares">Servicio de remodelacion general de viviendas unifamiliares</option>
+                        <option value="Servicios de reparacion de casas moviles en el sitio">Servicios de reparacion de casas moviles en el sitio</option>
+                        <option value="Servicios de construccion y reparacion de patios y terrazas">Servicios de construccion y reparacion de patios y terrazas</option>
+                        <option value="Servico de reparacion por daños ocasionados por fuego de viviendas unifamiliares">Servico de reparacion por daños ocasionados por fuego de viviendas unifamiliares</option>
+                        <option value="Servicio de construccion de casas unifamiliares nuevas">Servicio de construccion de casas unifamiliares nuevas</option>
+                        <option value="Servicio de instalacion de casas unifamiliares prefabricadas">Servicio de instalacion de casas unifamiliares prefabricadas</option>
+                        <option value="Servicio de construccion de casas en la ciudad o casas jardin unifamiliares nuevas">Servicio de construccion de casas en la ciudad o casas jardin unifamiliares nuevas</option>
+                        <option value="Dasarrollo urbano">Dasarrollo urbano</option>
+                        <option value="Servicio de planificacion de la ordenacion urbana">Servicio de planificacion de la ordenacion urbana</option>
+                        <option value="Servicio de administracion de tierras urbanas">Servicio de administracion de tierras urbanas</option>
+                        <option value="Servicio de programacion de inversiones urbanas">Servicio de programacion de inversiones urbanas</option>
+                        <option value="Servicio de reestructuracion de barrios marginales">Servicio de reestructuracion de barrios marginales</option>
+                        <option value="Servicios de alumbrado urbano">Servicios de alumbrado urbano</option>
+                        <option value="Servicios de control o regulacion del desarrollo urbano">Servicios de control o regulacion del desarrollo urbano</option>
+                        <option value="Servicios de estandares o regulacion de edificios urbanos">Servicios de estandares o regulacion de edificios urbanos</option>
+                        <option value="Servicios comunitarios urbanos">Servicios comunitarios urbanos</option>
+                        <option value="Servicios de administracion o gestion de proyectos o programas urbanos">Servicios de administracion o gestion de proyectos o programas urbanos</option>
+                        <option value="Ingenieria civil">Ingenieria civil</option>
+                        <option value="Ingenieria de carreteras">Ingenieria de carreteras</option>
+                        <option value="Ingenieria deinfraestructura de instalaciones o fabricas">Ingenieria deinfraestructura de instalaciones o fabricas</option>
+                        <option value="Servicios de mantenimiento e instalacion de equipo pesado">Servicios de mantenimiento e instalacion de equipo pesado</option>
+                        <option value="Servicio de mantenimiento y reparacion de equipo pesado">Servicio de mantenimiento y reparacion de equipo pesado</option>
+                    </select>
+                    <input type="hidden" id="descripcion_del_servicio" name="descripcion_del_servicio">
+                </div>
+
+                <div class="form-group">
+                    <label for="razon_social">Razón Social (*)</label>
+                    <input type="text" id="razon_social" name="razon_social" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="r_f_c">R.F.C (*)</label>
+                    <input type="text" id="r_f_c" name="r_f_c" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="domicilio_del_cliente">Domicilio del Cliente</label>
+                    <input type="text" id="domicilio_del_cliente" name="domicilio_del_cliente">
+                </div>
+
+                <div class="form-group">
+                    <label for="telefono_del_cliente">Teléfono del Cliente</label>
+                    <input type="tel" id="telefono_del_cliente" name="telefono_del_cliente">
+                </div>
+
+                <div class="form-group">
+                    <label for="correo_del_cliente">Correo del Cliente (*)</label>
+                    <input type="email" id="correo_del_cliente" name="correo_del_cliente" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="fecha_de_inicio_del_servicio">Fecha de Inicio Estimada</label>
+                    <input type="date" id="fecha_de_inicio_del_servicio" name="fecha_de_inicio_del_servicio">
+                </div>
+
+                <div class="form-group">
+                    <label for="fecha_de_conclusion_del_servicio">Fecha de Conclusión Estimada</label>
+                    <input type="date" id="fecha_de_conclusion_del_servicio" name="fecha_de_conclusion_del_servicio">
+                </div>
+
+                <div class="form-group">
+                    <label for="monto_de_la_operacion_sin_iva">Monto de la Operación (Sin IVA) (*)</label>
+                    <input type="number" id="monto_de_la_operacion_sin_iva" name="monto_de_la_operacion_sin_iva" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="forma_de_pago">Forma de Pago</label>
+                    <input type="text" id="forma_de_pago" name="forma_de_pago">
+                </div>
+
+                <div class="form-group">
+                    <label for="cantidad">Cantidad de Unidades</label>
+                    <input type="number" id="cantidad" name="cantidad" step="1">
+                </div>
+
+                <div class="form-group">
+                    <label for="unidad">Unidad de Medida (Ej: Servicio, Hora, Documento)</label>
+                    <input type="text" id="unidad" name="unidad">
+                </div>
+
+                <div class="form-group">
+                    <label for="numero_de_contrato">Número de Contrato</label>
+                    <input type="text" id="numero_de_contrato" name="numero_de_contrato">
+                </div>
+
+                <div class="form-group">
+                    <label for="fecha_de_operacion">Fecha de Operacion</label>
+                    <input type="date" id="fecha_de_operacion" name="fecha_de_operacion">
+                </div>
+
+                <div class="form-group">
+                    <label for="nombre_completo_de_la_persona_que_firma_la_solicitud">Nombre Completo de la Persona que Firma (*)</label>
+                    <input type="text" id="nombre_completo_de_la_persona_que_firma_la_solicitud" name="nombre_completo_de_la_persona_que_firma_la_solicitud" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cargo_de_la_persona_que_firma_la_solicitud">Cargo de la Persona que Firma</label>
+                    <input type="text" id="cargo_de_la_persona_que_firma_la_solicitud" name="cargo_de_la_persona_que_firma_la_solicitud">
+                </div>
+
+                <div class="form-group">
+                    <label for="factura_relacionada_con_la_operacion">Factura Relacionada con la Operación</label>
+                    <input type="text" id="factura_relacionada_con_la_operacion" name="factura_relacionada_con_la_operacion">
+                </div>
+
+                <div class="form-group">
+                    <label for="informe_si_cuenta_con_fotografias_videos_o_informacion_adicion">¿Cuenta con fotografías, videos o información adicional? (Describa)</label>
+                    <textarea id="informe_si_cuenta_con_fotografias_videos_o_informacion_adicion" name="informe_si_cuenta_con_fotografias_videos_o_informacion_adicion" rows="2"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="comentarios">Comentarios Finales (Observaciones, notas)</label>
+                    <textarea id="comentarios" name="comentarios" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="imagen_usuario">Cargar imagen para insertar en Word</label>
+                    <input type="file" id="imagen_usuario" name="imagen_usuario" accept="image/*">
+                </div>
+
+                <button type="submit" class="btn-submit">Generar Solicitud y Descargar Word</button>
+            </form>
+        </div>
+
+        <button id="logout-btn" onclick="logout()">
+            Cerrar sesión
+        </button>
+    </div>
+
+    <script>
+        // Lógica de Autenticación Front
+        function login() {
+            const userInp = document.getElementById('user').value;
+            const passInp = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error');
+            const container = document.getElementById('main-container');
+
+            if (userInp === "uriel" && passInp === "123456") {
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('form-solicitud').style.display = 'block';
+                document.getElementById('logout-btn').style.display = 'block';
+                container.classList.add('dashboard-mode');
+                errorDiv.textContent = "";
+            } else {
+                errorDiv.textContent = "Credenciales incorrectas. Intente de nuevo.";
+            }
+        }
+
+        function logout() {
+            location.reload();
+        }
+
+        // Manejo del Envío del Formulario
+        document.getElementById('solicitudForm').onsubmit = async function(e) {
+            e.preventDefault();
+
+            const btn = this.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+
+            btn.textContent = "Generando archivos... por favor espere";
+            btn.disabled = true;
+
+            const formData = new FormData(this);
+
+            try {
+                const response = await fetch('/generate-word', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = "Solicitud_Registro.docx";
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    window.URL.revokeObjectURL(url);
+
+                    alert("¡Documento generado con éxito!");
+                    this.reset();
+                } else {
+                    alert("Hubo un error al generar el documento en el servidor.");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Error de conexión con el servidor.");
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        };
+        <script src="/script.js"></script>
+    
+</body>
+</html>
