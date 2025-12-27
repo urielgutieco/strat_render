@@ -97,6 +97,24 @@ const transporter = nodemailer.createTransport({
 // CORRECCIÓN 2: Ruta raíz para que Render confirme que el servicio está activo (Health Check)
 app.use(express.static(path.join(__dirname, 'static')));
 
+/* =========================
+   RUTA DE AUTENTICACIÓN
+========================= */
+app.post('/login', (req, res) => {
+    const { u, p } = req.body;
+
+    // Aquí comparamos contra las variables de entorno de Render
+    // Puedes agregar más usuarios siguiendo esta lógica
+    const isValid = (u === process.env.ADMIN_USER && p === process.env.ADMIN_PASS) || 
+                    (u === 'gerente' && p === 'pass2025'); // Ejemplo mixto
+
+    if (isValid) {
+        res.json({ success: true });
+    } else {
+        res.status(401).json({ success: false, message: 'No autorizado' });
+    }
+});
+
 app.post('/generate-word', upload.single('imagen_usuario'), async (req, res) => {
     try {
         const data = req.body;
