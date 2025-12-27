@@ -139,7 +139,60 @@
     </style>
 </head>
 
-<body x-data="{ section: 'inicio', isAuthenticated: false }">
+<body x-data="{ 
+    section: 'inicio', 
+    isAuthenticated: localStorage.getItem('isAuth') === 'true',
+    userTyped: '',
+    passTyped: '',
+    timeout: null,
+    inactivityTime: 10 * 60 * 1000,
+
+    init() {
+        if (this.isAuthenticated) {
+            this.resetTimer();
+        }
+    },
+
+    resetTimer() {
+        if (this.timeout) clearTimeout(this.timeout);
+        if (this.isAuthenticated) {
+            this.timeout = setTimeout(() => {
+                alert('Sesión cerrada por inactividad.');
+                this.logout();
+            }, this.inactivityTime);
+        }
+    },
+
+    login() {
+        fetch('/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ u: this.userTyped, p: this.passTyped })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                this.isAuthenticated = true;
+                localStorage.setItem('isAuth', 'true');
+                this.section = 'formulario';
+                this.resetTimer();
+            } else {
+                alert('Credenciales incorrectas');
+            }
+        })
+        .catch(() => alert('Error de conexión'));
+    },
+
+    logout() {
+        this.isAuthenticated = false;
+        localStorage.removeItem('isAuth');
+        this.section = 'inicio';
+        if (this.timeout) clearTimeout(this.timeout);
+    }
+}" 
+@mousemove.window="resetTimer()" 
+@keydown.window="resetTimer()" 
+@click.window="resetTimer()">
 
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
@@ -156,7 +209,7 @@
                     <template x-if="isAuthenticated">
                         <div class="d-flex align-items-center">
                             <a class="nav-link px-3" href="#" @click="section = 'formulario'">Generar Contrato</a>
-                            <a class="nav-link text-warning ms-lg-3" href="#" @click="isAuthenticated = false; section = 'inicio'">Cerrar Sesión</a>
+                            <a class="nav-link text-warning ms-lg-3" href="#" @click="logout()">Cerrar Sesión</a>
                         </div>
                     </template>
                 </div>
@@ -193,134 +246,107 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-    <h5 class="text-accent-light text-uppercase fw-bold mb-3" style="color: var(--accent-light);">Servicios Especializados</h5>
-    <div class="accordion" id="serviciosAccordion">
-        
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#serv1">
-                    Defensa Legal y Consultoría Técnica
-                </button>
-            </h2>
-            <div id="serv1" class="accordion-collapse collapse show" data-bs-parent="#serviciosAccordion">
-                <div class="accordion-body text-dim">
-                    <div class="row align-items-center">
-                        <div class="col-sm-4 mb-3 mb-sm-0">
-                            <img src="ruta-a-tu-imagen-1.jpg" class="img-fluid rounded" alt="Defensa Legal">
+                    <h5 class="text-accent-light text-uppercase fw-bold mb-3" style="color: var(--accent-light);">Servicios Especializados</h5>
+                    <div class="accordion" id="serviciosAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#serv1">
+                                    Defensa Legal y Consultoría Técnica
+                                </button>
+                            </h2>
+                            <div id="serv1" class="accordion-collapse collapse show" data-bs-parent="#serviciosAccordion">
+                                <div class="accordion-body text-dim">
+                                    <div class="row align-items-center">
+                                        <div class="col-sm-4 mb-3 mb-sm-0">
+                                            <img src="ruta-a-tu-imagen-1.jpg" class="img-fluid rounded" alt="Defensa Legal">
+                                        </div>
+                                        <div class="col-sm-8">
+                                            Si buscas tranquilidad legal, Defensa Legal y Consultoría Técnica es la mejor opción. Su enfoque interdisciplinario marca la diferencia.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-sm-8">
-                            Si buscas tranquilidad legal, Defensa Legal y Consultoría Técnica es la mejor opción.
-                             Su enfoque interdisciplinario marca la diferencia: entienden tanto la ley como los detalles
-                              técnicos de fondo. Profesionales, directos y, sobre todo, efectivos.
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#serv2">
+                                    Estrategia Fiscal
+                                </button>
+                            </h2>
+                            <div id="serv2" class="accordion-collapse collapse" data-bs-parent="#serviciosAccordion">
+                                <div class="accordion-body text-dim">
+                                    <div class="row align-items-center">
+                                        <div class="col-sm-4 mb-3 mb-sm-0">
+                                            <img src="ruta-a-tu-imagen-2.jpg" class="img-fluid rounded" alt="Estrategia Fiscal">
+                                        </div>
+                                        <div class="col-sm-8">
+                                            Maximizar utilidades requiere más que solo vender; requiere una buena Estrategia Fiscal.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#serv2">
-                    Estrategia Fiscal
-                </button>
-            </h2>
-            <div id="serv2" class="accordion-collapse collapse" data-bs-parent="#serviciosAccordion">
-                <div class="accordion-body text-dim">
-                    <div class="row align-items-center">
-                        <div class="col-sm-4 mb-3 mb-sm-0">
-                            <img src="ruta-a-tu-imagen-2.jpg" class="img-fluid rounded" alt="Estrategia Fiscal">
-                        </div>
-                        <div class="col-sm-8">
-                            Maximizar utilidades requiere más que solo vender; requiere una buena Estrategia Fiscal.
-                             Excelente servicio: claridad desde el día uno, cumplimiento impecable y ahorro real bajo
-                              el marco de la ley. ¡Indispensable para escalar cualquier proyecto!
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#serv3">
-                    Auditoría Forense y Cumplimiento
-                </button>
-            </h2>
-            <div id="serv3" class="accordion-collapse collapse" data-bs-parent="#serviciosAccordion">
-                <div class="accordion-body text-dim">
-                    <div class="row align-items-center">
-                        <div class="col-sm-4 mb-3 mb-sm-0">
-                            <img src="ruta-a-tu-imagen-3.jpg" class="img-fluid rounded" alt="Auditoría">
-                        </div>
-                        <div class="col-sm-8">
-                            Proteja la integridad de su empresa con procesos de revisión profunda. Identificamos riesgos antes de que se conviertan en problemas, asegurando que cada operación cumpla con las normativas internacionales y locales vigentes.
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#serv3">
+                                    Auditoría Forense y Cumplimiento
+                                </button>
+                            </h2>
+                            <div id="serv3" class="accordion-collapse collapse" data-bs-parent="#serviciosAccordion">
+                                <div class="accordion-body text-dim">
+                                    <div class="row align-items-center">
+                                        <div class="col-sm-4 mb-3 mb-sm-0">
+                                            <img src="ruta-a-tu-imagen-3.jpg" class="img-fluid rounded" alt="Auditoría">
+                                        </div>
+                                        <div class="col-sm-8">
+                                            Proteja la integridad de su empresa con procesos de revisión profunda.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-    </div>
-</div>
             </div>
         </div>
     </section>
 
-<section x-show="section === 'login'" x-transition x-cloak class="container my-5 py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-4">
-            <div class="card p-4 shadow-sm">
-                <div class="text-center mb-4">
-                    <h3 class="fw-bold">Acceso Seguro</h3>
-                    <p class="text-dim small">Ingrese sus credenciales corporativas</p>
-                </div>
+    <section x-show="section === 'login'" x-transition x-cloak class="container my-5 py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="card p-4 shadow-sm">
+                    <div class="text-center mb-4">
+                        <h3 class="fw-bold">Acceso Seguro</h3>
+                        <p class="text-dim small">Ingrese sus credenciales corporativas</p>
+                    </div>
 
-                <form @submit.prevent="
-                    fetch('/login', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ u: userTyped, p: passTyped })
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            isAuthenticated = true;
-                            section = 'formulario';
-                        } else {
-                            alert('Credenciales incorrectas');
-                        }
-                    })
-                    .catch(() => alert('Error de conexión'));
-                ">
-                    <div class="mb-3">
-                        <label class="form-label">Usuario</label>
-                        <input type="text" x-model="userTyped" class="form-control w-100" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Contraseña</label>
-                        <input type="password" x-model="passTyped" class="form-control w-100" required>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary w-100 mt-3">Autenticar</button>
-                    <button type="button" @click="section = 'inicio'" class="btn btn-link w-100 mt-2 text-muted text-decoration-none">← Volver</button>
-                </form>
+                    <form @submit.prevent="login()">
+                        <div class="mb-3">
+                            <label class="form-label">Usuario</label>
+                            <input type="text" x-model="userTyped" class="form-control w-100" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña</label>
+                            <input type="password" x-model="passTyped" class="form-control w-100" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 mt-3">Autenticar</button>
+                        <button type="button" @click="section = 'inicio'" class="btn btn-link w-100 mt-2 text-muted text-decoration-none">← Volver</button>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<section x-show="section === 'formulario'" x-transition x-cloak class="container my-5" x-data="{ loading: false, success: false }">
+    <section x-show="section === 'formulario'" x-transition x-cloak class="container my-5" x-data="{ loading: false, success: false }">
         <div class="card border-0">
             <div class="card-header text-center">
                 <h4 class="mb-0 fw-bold">Gestión de Contratos de Servicio</h4>
                 <p class="text-dim small mb-0 mt-1">Llene los campos para la generación automatizada del documento</p>
             </div>
             <div class="card-body p-lg-5">
-                
                 <div x-show="success" class="alert alert-success mb-4" x-transition>
                     ¡Documentos enviados con éxito! El formulario se ha reiniciado.
                 </div>
-
                 <form @submit.prevent="
                     loading = true;
                     const formData = new FormData($el);
@@ -332,7 +358,7 @@
                     .then(data => {
                         loading = false;
                         if(data.status === 'OK') {
-                            $el.reset(); // ESTO LIMPIA EL FORMULARIO
+                            $el.reset();
                             success = true;
                             alert('Proceso completado.');
                             setTimeout(() => success = false, 6000);
@@ -342,10 +368,9 @@
                     })
                     .catch(err => {
                         loading = false;
-                        alert('Error de conexión con el servidor. Revise los logs de Render.');
+                        alert('Error de conexión con el servidor.');
                     });
                 " enctype="multipart/form-data">
-                    
                     <div class="row g-4">
                         <div class="col-12">
                             <div class="p-4 rounded-4 bg-white bg-opacity-10 border border-white border-opacity-10">
