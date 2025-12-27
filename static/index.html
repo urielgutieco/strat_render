@@ -146,6 +146,8 @@
     passTyped: '',
     timeout: null,
     inactivityTime: 10 * 60 * 1000,
+    loading: false, 
+    success: false,
 
     init() {
         if (this.isAuthenticated) {
@@ -337,7 +339,7 @@
         </div>
     </section>
 
-    <section x-show="section === 'formulario'" x-transition x-cloak class="container my-5" x-data="{ loading: false, success: false }">
+    <section x-show="section === 'formulario'" x-transition x-cloak class="container my-5">
         <div class="card border-0">
             <div class="card-header text-center">
                 <h4 class="mb-0 fw-bold">Gestión de Contratos de Servicio</h4>
