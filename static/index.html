@@ -10,134 +10,144 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
     
-    <style>
-        :root {
-            --bg-dark: #020617;
-            --accent-blue: #3b82f6;
-            --accent-light: #60a5fa;
-            --text-main: #f8fafc;
-            --text-dim: #94a3b8;
-            --card-bg: rgba(30, 41, 59, 0.5); 
-            --border-color: rgba(255, 255, 255, 0.08);
-            --input-focus: #3b82f6;
-        }
+<style>
+    /* DEFINICIÓN DE VARIABLES GLOBALES: Centraliza colores y estilos para facilitar cambios rápidos */
+    :root {
+        --bg-dark: #020617;          /* Fondo principal oscuro (estilo Deep Blue) */
+        --accent-blue: #3b82f6;      /* Azul brillante para llamadas a la acción */
+        --accent-light: #60a5fa;     /* Azul claro para estados 'hover' y realces */
+        --text-main: #f8fafc;        /* Blanco grisáceo para lectura cómoda */
+        --text-dim: #8aa6cd;         /* Texto secundario o leyendas */
+        --card-bg: rgba(30, 41, 59, 0.5); /* Fondo traslúcido para efecto de cristal */
+        --border-color: rgba(255, 255, 255, 0.08); /* Bordes sutiles casi invisibles */
+        --input-focus: #3b82f6;      /* Color de resalte al hacer clic en campos */
+    }
 
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            letter-spacing: -0.01em;
-        }
+    /* ESTILOS BASE: Configuración de tipografía y color de fondo general */
+    body {
+        background-color: var(--bg-dark);
+        color: var(--text-main);
+        font-family: 'Plus Jakarta Sans', sans-serif; /* Fuente moderna de estilo corporativo */
+        letter-spacing: -0.01em; /* Ajuste fino de espaciado para legibilidad profesional */
+    }
 
-        /* Navbar Profesional */
-        .navbar {
-            background-color: rgba(2, 6, 23, 0.8);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border-color);
-            padding: 15px 0;
-        }
+    /* BARRA DE NAVEGACIÓN: Implementa efecto 'Blur' (Glassmorphism) */
+    .navbar {
+        background-color: rgba(2, 6, 23, 0.8); /* Fondo semi-transparente */
+        backdrop-filter: blur(12px);           /* Desenfoque del fondo al hacer scroll */
+        border-bottom: 1px solid var(--border-color);
+        padding: 15px 0;
+    }
 
-        .navbar-brand {
-            font-weight: 800;
-            letter-spacing: -1px;
-            color: var(--accent-light) !important;
-        }
+    /* LOGOTIPO / MARCA: Énfasis en peso visual y color de realce */
+    .navbar-brand {
+        font-weight: 800;
+        letter-spacing: -1px;
+        color: var(--accent-light) !important;
+    }
 
-        /* Hero Dinámico */
-        .hero-section {
-            background: 
-                radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 10% 80%, rgba(37, 99, 235, 0.1) 0%, transparent 40%);
-            padding: 140px 0 80px;
-            text-align: center;
-        }
+    /* SECCIÓN PRINCIPAL (HERO): Uso de gradientes radiales para dar profundidad 3D */
+    .hero-section {
+        background: 
+            radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 40%),
+            radial-gradient(circle at 10% 80%, rgba(37, 99, 235, 0.1) 0%, transparent 40%);
+        padding: 140px 0 80px;
+        text-align: center;
+    }
 
-        h1 {
-            font-size: 4rem;
-            font-weight: 800;
-            background: linear-gradient(180deg, #ffffff 0%, #94a3b8 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 1.5rem;
-        }
+    /* TÍTULO PRINCIPAL: Graduación de color en el texto (Efecto metálico) */
+    h1 {
+        font-size: 4rem;
+        font-weight: 800;
+        background: linear-gradient(180deg, #ffffff 0%, #94a3b8 100%);
+        -webkit-background-clip: text;      /* Recorta el gradiente a la forma de la letra */
+        -webkit-text-fill-color: transparent; /* Hace el texto transparente para ver el fondo */
+        margin-bottom: 1.5rem;
+    }
 
-        /* Cards Estilo Ejecutivo */
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
-        }
+    /* TARJETAS (CARDS): Estética de 'Cristal Esmerilado' */
+    .card {
+        background: var(--card-bg);
+        backdrop-filter: blur(20px);         /* Difuminado interno */
+        border: 1px solid var(--border-color);
+        border-radius: 24px;                 /* Bordes muy redondeados (Modern UI) */
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); /* Sombra profunda para dar elevación */
+        overflow: hidden;
+    }
 
-        .card-header {
-            background: rgba(255, 255, 255, 0.03) !important;
-            border-bottom: 1px solid var(--border-color) !important;
-            padding: 25px;
-        }
+    .card-header {
+        background: rgba(255, 255, 255, 0.03) !important;
+        border-bottom: 1px solid var(--border-color) !important;
+        padding: 25px;
+    }
 
-        /* Formulario Organizado */
-        .form-label {
-            color: var(--text-dim);
-            font-weight: 600;
-            font-size: 0.85rem;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+    /* ETIQUETAS DE FORMULARIO: Estilo tipográfico minimalista y espaciado */
+    .form-label {
+        color: var(--text-dim);
+        font-weight: 600;
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+        text-transform: uppercase;           /* Texto en mayúsculas para seriedad */
+        letter-spacing: 0.5px;
+    }
 
-        input, select, textarea {
-            background: rgba(15, 23, 42, 0.6) !important;
-            border: 1px solid var(--border-color) !important;
-            color: white !important;
-            border-radius: 12px !important;
-            padding: 12px 16px !important;
-            transition: all 0.3s ease !important;
-        }
+    /* CAMPOS DE ENTRADA (INPUTS): Adaptación al modo oscuro */
+    input, select, textarea {
+        background: rgba(15, 23, 42, 0.6) !important;
+        border: 1px solid var(--border-color) !important;
+        color: white !important;
+        border-radius: 12px !important;
+        padding: 12px 16px !important;
+        transition: all 0.3s ease !important; /* Transición suave para interacciones */
+    }
 
-        input:focus, select:focus, textarea:focus {
-            border-color: var(--input-focus) !important;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15) !important;
-            outline: none;
-        }
+    /* EFECTO DE FOCO: Mejora la experiencia de usuario al escribir */
+    input:focus, select:focus, textarea:focus {
+        border-color: var(--input-focus) !important;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15) !important; /* Halo azul suave alrededor */
+        outline: none;
+    }
 
-        /* Botones */
-        .btn-primary {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            border: none;
-            border-radius: 14px;
-            padding: 14px 32px;
-            font-weight: 700;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+    /* BOTONES: Gradiente dinámico y efectos de movimiento */
+    .btn-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        border: none;
+        border-radius: 14px;
+        padding: 14px 32px;
+        font-weight: 700;
+        /* Curva Bezier para una animación de rebote sutil */
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
 
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.5);
-        }
+    /* INTERACCIÓN DEL BOTÓN: Elevación visual al pasar el cursor */
+    .btn-primary:hover {
+        transform: translateY(-3px);         /* El botón sube ligeramente */
+        box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.5); /* Brillo externo azul */
+    }
 
-        /* Accordion Custom */
-        .accordion-item {
-            background: transparent !important;
-            border: 1px solid var(--border-color) !important;
-            border-radius: 15px !important;
-            margin-bottom: 10px;
-        }
+    /* ACORDEÓN: Estilo personalizado para integrarse con el fondo oscuro */
+    .accordion-item {
+        background: transparent !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 15px !important;
+        margin-bottom: 10px;
+    }
 
-        .accordion-button {
-            background: transparent !important;
-            color: white !important;
-            font-weight: 600;
-        }
+    .accordion-button {
+        background: transparent !important;
+        color: white !important;
+        font-weight: 600;
+    }
 
-        .accordion-button:not(.collapsed) {
-            color: var(--accent-light) !important;
-            box-shadow: none !important;
-        }
+    /* ESTADO ABIERTO DEL ACORDEÓN: Resalte del encabezado activo */
+    .accordion-button:not(.collapsed) {
+        color: var(--accent-light) !important;
+        box-shadow: none !important;
+    }
 
-        [x-cloak] { display: none !important; }
-    </style>
+    /* UTILIDAD ALPINE.JS: Evita el parpadeo de elementos ocultos al cargar la página */
+    [x-cloak] { display: none !important; }
+</style>
 </head>
 
 <body x-data="{ 

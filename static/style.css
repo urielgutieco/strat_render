@@ -1,23 +1,26 @@
-/* 1. VARIABLES GLOBALES */
+/* 1. VARIABLES GLOBALES 
+   Definición de la paleta de colores y tokens de diseño. 
+   Permite cambiar el tema visual de toda la web desde un solo lugar. */
 :root {
-    --bg: #f4f7f6;             /* Fondo más claro y profesional para lectura */
-    --accent: #1e293b;         /* Azul Slate oscuro (más moderno) */
-    --accent-light: #334155;   /* Slate medio */
-    --muted: #64748b;          /* Gris neutro */
-    --panel: #ffffff;          /* Fondo blanco para las tarjetas (mejor contraste) */
-    --border: #cbd5e1;         /* Bordes suaves */
-    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --radius: 12px;            /* Bordes más redondeados modernos */
-    --font-main: "Inter", system-ui, -apple-system, sans-serif;
-    --color-secondary: #D4AF37; /* Dorado Strat & Tax */
+    --bg: #f4f7f6;             /* Color de fondo neutral para reducir fatiga visual */
+    --accent: #1e293b;         /* Color primario para headers y elementos de autoridad */
+    --accent-light: #334155;   
+    --muted: #64748b;          /* Usado en textos secundarios y etiquetas de formularios */
+    --panel: #ffffff;          /* Color de las "hojas" o tarjetas donde va el contenido */
+    --border: #cbd5e1;         
+    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Efecto de elevación */
+    --radius: 12px;            /* Curvatura de esquinas para un aspecto moderno/app */
+    --font-main: "Inter", system-ui, -apple-system, sans-serif; /* Tipografías seguras para web */
+    --color-secondary: #D4AF37; /* Color de identidad corporativa (Dorado) */
     --white: #ffffff;
-    --error: #ef4444;          /* Rojo para errores */
-    --success: #10b981;        /* Verde para éxito */
+    --error: #ef4444;          
+    --success: #10b981;        
 }
 
-/* 2. RESET Y ESTILOS BASE */
+/* 2. RESET Y ESTILOS BASE 
+   Normalización para que el diseño se vea igual en todos los navegadores. */
 *, *::before, *::after {
-    box-sizing: border-box;
+    box-sizing: border-box; /* Asegura que el padding no afecte el ancho total del elemento */
 }
 
 html, body {
@@ -27,17 +30,18 @@ html, body {
     color: var(--accent);
     font-family: var(--font-main);
     line-height: 1.5;
-    display: flex;
+    display: flex; /* Flexbox para empujar el footer hacia abajo si hay poco contenido */
     flex-direction: column;
 }
 
-/* 3. HEADER Y NAVEGACIÓN */
+/* 3. HEADER Y NAVEGACIÓN 
+   Controla la barra superior y su comportamiento al hacer scroll. */
 header {
     background: var(--accent);
     padding: 0.75rem 0;
-    position: sticky;
+    position: sticky; /* Se mantiene visible al bajar la página */
     top: 0;
-    z-index: 100;
+    z-index: 100; /* Asegura que pase por encima de otros elementos */
     box-shadow: var(--shadow);
 }
 
@@ -45,7 +49,7 @@ header {
     max-width: 1100px;
     margin: 0 auto;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Logo a la izquierda, menú a la derecha */
     align-items: center;
     padding: 0 1.5rem;
 }
@@ -57,7 +61,7 @@ header {
 }
 
 nav ul {
-    list-style: none;
+    list-style: none; /* Quita los puntos de la lista */
     display: flex;
     gap: 1.5rem;
     margin: 0;
@@ -69,16 +73,17 @@ nav a {
     text-decoration: none;
     font-weight: 500;
     font-size: 0.95rem;
-    transition: all 0.2s ease;
+    transition: all 0.2s ease; /* Suaviza el cambio de color al pasar el mouse */
 }
 
 nav a:hover {
     color: var(--color-secondary);
 }
 
-/* 4. CONTENIDO PRINCIPAL */
+/* 4. CONTENIDO PRINCIPAL 
+   Define el área donde se encuentran los títulos y formularios. */
 .page-content {
-    flex: 1;
+    flex: 1; /* Ocupa todo el espacio disponible entre el header y el footer */
     padding: 2rem 1rem;
     width: 100%;
     max-width: 1100px;
@@ -94,7 +99,7 @@ h1 {
 }
 
 h1::after {
-    content: '';
+    content: ''; /* Genera la línea dorada debajo del título principal */
     display: block;
     width: 60px;
     height: 4px;
@@ -103,7 +108,8 @@ h1::after {
     border-radius: 2px;
 }
 
-/* 5. TARJETAS (CARDS) */
+/* 5. TARJETAS (CARDS) 
+   Crea el contenedor blanco para el formulario de contratos. */
 .card {
     background: var(--panel);
     padding: 2rem;
@@ -114,14 +120,15 @@ h1::after {
     border: 1px solid rgba(0,0,0,0.05);
 }
 
-/* 6. FORMULARIOS */
+/* 6. FORMULARIOS 
+   Estilización de campos de texto, selectores y etiquetas. */
 label {
     display: block;
     font-weight: 600;
     margin-top: 1.25rem;
     font-size: 0.85rem;
     color: var(--muted);
-    text-transform: uppercase;
+    text-transform: uppercase; /* Estética de formulario corporativo */
     letter-spacing: 0.025em;
 }
 
@@ -130,7 +137,7 @@ input, select, textarea {
     padding: 0.75rem;
     border-radius: 8px;
     border: 1px solid var(--border);
-    background: #f8fafc;
+    background: #f8fafc; /* Fondo grisáceo muy leve para inputs */
     margin-top: 0.4rem;
     font-family: inherit;
     font-size: 1rem;
@@ -139,12 +146,13 @@ input, select, textarea {
 
 input:focus, select:focus, textarea:focus {
     outline: none;
-    border-color: var(--color-secondary);
+    border-color: var(--color-secondary); /* Resaltado dorado al hacer clic */
     background: var(--white);
     box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
 }
 
-/* 7. BOTONES */
+/* 7. BOTONES 
+   Interacción visual de los botones de envío y acciones. */
 button, .btn-submit {
     padding: 0.8rem 1.5rem;
     width: 100%;
@@ -164,7 +172,7 @@ button:hover {
 }
 
 button:active {
-    transform: scale(0.98);
+    transform: scale(0.98); /* Pequeño efecto de hundimiento al presionar */
 }
 
 button:disabled {
@@ -174,10 +182,11 @@ button:disabled {
 }
 
 .btn-danger {
-    background: #dc2626 !important;
+    background: #dc2626 !important; /* Para el botón de "Cerrar Sesión" o borrar */
 }
 
-/* 8. FEEDBACK (MENSAJES) */
+/* 8. FEEDBACK (MENSAJES) 
+   Estilos para alertas de "Enviado con éxito" o errores de servidor. */
 .flash-message {
     padding: 1rem;
     border-radius: 8px;
@@ -189,7 +198,8 @@ button:disabled {
 .message.success { color: var(--success); background: #ecfdf5; border: 1px solid var(--success); }
 .message.error { color: var(--error); background: #fef2f2; border: 1px solid var(--error); }
 
-/* 9. FOOTER */
+/* 9. FOOTER 
+   Área informativa al final de la página. */
 footer {
     background: var(--accent);
     color: #94a3b8;
@@ -198,7 +208,8 @@ footer {
     font-size: 0.85rem;
 }
 
-/* Responsive */
+/* Responsive 
+   Ajustes para que el portal se vea bien en celulares (iPhone/Android). */
 @media (max-width: 768px) {
     .header-content { flex-direction: column; padding: 1rem; }
     nav ul { margin-top: 1rem; gap: 1rem; }
